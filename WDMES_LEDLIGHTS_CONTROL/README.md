@@ -1,4 +1,5 @@
 Purpose:
+-------
 This is the documentation for the Welling and District Model Engineering Society OO Gauge lighting model.
 
 The lighting model is executed by an Arduino nano, with a number of peripherals

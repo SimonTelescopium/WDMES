@@ -60,13 +60,11 @@ Controller feedback:
 An I2C 16x2 LCD display shows the models day of week, time, Period of day and status.
 e.g.
 
-Wednesday  19:00
+    Wednesday  19:00
+    Evening  Running
 
-Evening  Running
-
-Monday     03:00
-
-Night     Paused
+    Monday     03:00
+    Night     Paused
 
 The periods of the day are split into the following...
 Night, Twilight, Day, Twilight, Evening

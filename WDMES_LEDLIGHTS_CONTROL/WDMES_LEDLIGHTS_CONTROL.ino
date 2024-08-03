@@ -48,7 +48,7 @@ const int OFF = 1;
 for an authentic experience scale should be set to 47000
 i.e 47s in the model is one hour or 1 day in the model is 18.8 minutes
 */
-const double Scale = 1000;  //Change to 47000 to scale with OO Gauge
+const double Scale = 200;  //Change to 3917 (this is equvilent to simulating a '5 minute' cadence in the model. (was a 1hr cadence) 47000 to scale with OO Gauge
 
 //
 // NO MORE CONFIGURATION BEYOND THIS POINT
@@ -101,7 +101,7 @@ void loop() {
 
         break;
 
-      case 7:  //Dawn    07:00-08:00
+      case 84:  //Dawn    07:00-08:00
 
         lcdPrint("Dawn     ", 1);
         StreetLightsTwilight(OFF);
@@ -109,12 +109,12 @@ void loop() {
 
         break;
 
-      case 8:  //Day     08:00 - 18:00
+      case 96:  //Day     08:00 - 18:00
         lcdPrint("Day      ", 1);
         LightsDay();
         break;
 
-      case 18:  //Dusk    18:00-19:00
+      case 216:  //Dusk    18:00-19:00
 
         lcdPrint("Dusk     ", 1);
         StreetLightsTwilight(ON);
@@ -123,12 +123,12 @@ void loop() {
 
         break;
 
-      case 19:  //Evening 19:00 - 23:00
+      case 228:  //Evening 19:00 - 23:00
         lcdPrint("Evening  ", 1);
         LightsEvening();
         break;
 
-      case 23:  //Bedtime 23:00 - 00:00
+      case 276:  //Bedtime 23:00 - 00:00
         lcdPrint("Bedtime  ", 1);
         LightsBedtime();
         break;
@@ -145,7 +145,7 @@ void loop() {
     Serial.println("Time Paused");
     TimeStatus = " Paused";
   }
-  if (CurrentTime == 24) {
+  if (CurrentTime == 288) {
     //reset Start Time for model midnight
     CurrentTime = 0;
     CurrentDay++;
@@ -392,12 +392,19 @@ void message() {
   Serial.println("Message ends");
 }
 
-String TimeFormat(int Hour) {
+String TimeFormat(int timeIndex) {
+  int Hour = abs(timeIndex/12);
+  int Minute =(timeIndex-(Hour*12))*5;
   String FormattedTime;
   if (Hour < 10) {
     FormattedTime = "0" + String(Hour) + ":00";
   } else {
     FormattedTime = String(Hour) + ":00";
+  }
+  if (Minute <10){
+    FormattedTime=FormattedTime+":05"; 
+  } else{
+    FormattedTime=FormattedTime+":"+Minute;
   }
   return FormattedTime;
 }

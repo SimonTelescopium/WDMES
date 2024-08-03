@@ -1,5 +1,5 @@
 Purpose:
--------
+========
 This is the documentation for the Welling and District Model Engineering Society OO Gauge lighting model.
 
 The lighting model is executed by an Arduino nano, with a number of peripherals
@@ -27,14 +27,33 @@ these lights turn on and off in a random order and with a random period between 
 
 Special lights:
 --------------
-We have a model of our  clubhouse in our model railway, the lights and welder in the model clubhouse turn on and off according to our club opening hours. :-)
+We have a model of our  clubhouse in our model railway, the lights and welder (in the workshop)in the model clubhouse turn on and off according to our club opening hours. :-)
 
 
 Controlling the lights:
-====================
-Lights are controlled by a rotary switch which enables the controller to select between Day, Evening, Night and Auto, the switch is connected to an I2C GPIO extender (PCF8574) and feedback to the use is via an I2C 16x2 LCD display.
+-----------------------
+Lights are controlled by a rotary switch which enables the controller to select between Day, Evening, Night and Auto, the switch is connected to an I2C GPIO extender (PCF8574) and feedback to the user is via an I2C 16x2 LCD display.
+The model also incorporates days of the week, so that the special lights only  turn on on the correct days of the week according to the model.
 
-In auto mode lights cycle through at a rate of 48s = 1hr this is approximately the same as OO gauge scale. The model also incorporates days of the week, so that the special lights only  turn on on the correct days of the week according to the model.
+Auto:
+In auto-mode lights cycle through at a rate of 48s = 1hr this is approximately the same as OO gauge scale. 
+Day:
+Platform Lights - off
+Building Lights off
+Special Lights on
+Street Lights off
+Evening:
+Platform Lights - on
+Building Lights on
+Special Lights on
+Street Lights on
+Night:
+Platform Lights - on
+Building Lights off
+Special Lights off
+Street Lights on
+
+
 
 Controller feedback:
 -------------------

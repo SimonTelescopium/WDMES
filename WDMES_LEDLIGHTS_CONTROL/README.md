@@ -35,19 +35,19 @@ Controlling the lights:
 Lights are controlled by a rotary switch which enables the controller to select between Day, Evening, Night and Auto, the switch is connected to an I2C GPIO extender (PCF8574) and feedback to the user is via an I2C 16x2 LCD display.
 The model also incorporates days of the week, so that the special lights only  turn on on the correct days of the week according to the model.
 
-Auto:
+- **Auto:**
 In auto-mode lights cycle through at a rate of 48s = 1hr this is approximately the same as OO gauge scale. 
-Day:
+- **Day:**
 Platform Lights - off
 Building Lights off
 Special Lights on
 Street Lights off
-Evening:
+- **Evening:**
 Platform Lights - on
 Building Lights on
 Special Lights on
 Street Lights on
-Night:
+- **Night:**
 Platform Lights - on
 Building Lights off
 Special Lights off

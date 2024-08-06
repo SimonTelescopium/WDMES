@@ -1,23 +1,34 @@
 /* 
 WDMES I2C L.E.D. CONTROLLER
 ---------------------------
-By Simon Dawes
+AUTHOR:Simon Dawes
 ---------------------------
-This uses an I2C I/O Expansion board based on the PCF8574 IC
+This uses a I2C I/O Expansion boards based on the PCF8574 IC
 Default I2C address is 0x20 (all address switches set to 0)
 SCl and SDA need pull up resisters ~4.7kOhm - 10kOhm
 SDA to Pin A4 of Arduino nano
 SCL to Pin A5 of Arduino nano
 the PCF8574 GPIO board needs 5v
 
-PCF8574 Sw Config
+PCF8574 DIP Sw Config
 Pin 1 | Pin 2  | Pin 3 |Address
 off     off      off     0x20
 off     off      on      0x21
+off     on       off     0x22
+off     on       on      0x23
 
-Currently supports 1 I2C Board - it will support more in the future
-timing is scaled to OO guage ~1/76.1 (only roughly as Ive rounded quite a bit!)
-LED's wired to 5v PCF8574 switches then to ground
+LED's wired to 5v PCF8574 o/p then to ground
+
+Controls
+--------
+Controls consist of a 4 way rotary switch connected to a PCF8574 i/o expansion board, communicating over I2C
+- Common is connected to p0 
+- Day selection is connected to p1
+- Evening selection is connected to p2
+- Night selection is connected to p3
+
+User feedback is via a 16x2 LCD screen communicating over I2C
+In this way the controlls can be seperate from the main lighting circuit
 */
 //  FILE:WDMES_LEDLIGHTS_CONTROL.ino
 
@@ -28,9 +39,10 @@ LED's wired to 5v PCF8574 switches then to ground
 //const int PCF8574_address = 0x20;
 PCF8574 PCF_StreetLights(0x20);    // this is the address for the street lights (up to 8 lights)
 PCF8574 PCF_BuildingLights(0x21);  // this is the address for the building lights (up to 8 lights)
-PCF8574 PCF_PlatformLights(0x22);  //this is the address for the platform lights (up to 4 platforms, the rest will be used for special lights)
+PCF8574 PCF_PlatformLights(0x22);  // this is the address for the platform lights (up to 4 platforms, the rest will be used for special lights)
+PCF8574 PCF_Controls(0x23);        // this is the PCF GPIO board in the controll box.
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);  // set the LCD address and the number of columns and rows
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // set the LCD address and the number of columns and rows, ths is teh control box LCD
 
 // set below the digital pin to use to pause time
 #define PausePin 6  //D6 Pauses when Pin is high (5v)
@@ -44,14 +56,13 @@ bool Pause = false;
 const int ON = 0;
 const int OFF = 1;
 
-/*Scale is the amount of real time to pass in ms for 1 hour of  model time to pass, 
-for an authentic experience scale should be set to 47000
-i.e 47s in the model is one hour or 1 day in the model is 18.8 minutes
+/*Scale is the amount of real time to pass in ms for 5 minmutes of  model time to pass, 
+for an authentic experience scale should be set to 3947 i.e 47s in the model is one hour or 1 day in the model is 18.8 minutes
 */
-const double Scale = 200;  //Change to 3917 (this is equvilent to simulating a '5 minute' cadence in the model. (was a 1hr cadence) 47000 to scale with OO Gauge
+const double Scale = 400;  //Change to 3947 (this is equvilent to simulating a '5 minute' cadence in the model at OO gauge 1/76)
 
 //
-// NO MORE CONFIGURATION BEYOND THIS POINT
+//    ------------------------------ NO MORE CONFIGURATION BEYOND THIS POINT -------------------------------------
 //
 
 void setup() {
@@ -62,22 +73,21 @@ void setup() {
   PCF_StreetLights.begin();
   PCF_BuildingLights.begin();
   PCF_PlatformLights.begin();
+  PCF_Controls.begin();
 
   // Start LCD
   lcd.begin(16, 2);
-  lcd.backlight();
+  lcd.backlight(); //turn on back light
   // Start Serial Port
   Serial.begin(9600);
-  pinMode(PausePin, INPUT_PULLUP);  // Set digital pin used for - PAUSE TIMW - to input
+  pinMode(PausePin, INPUT_PULLUP);  // Set digital pin used to - PAUSE MODEL TIME - to input
 
   //perform a test on the connected PCF devices (o/p to serial port)
-  PCFTest();
-
-  //perform a start-up sequence
-  
-  lcdTest();
-  //LightsTest();
-  //message();
+  PCFTest();//test PCF output result on serial port
+  PCF_Controls.write(0, ON); //set pin 0 of control board this is the common for the control dial so we can detect the position the rotary switch is in 
+  lcdTest(); //perform a start-up sequence
+  //LightsTest();//perform a simple lights test
+  //message();  //flash a test messAGE
 }
 
 void loop() {
@@ -145,6 +155,7 @@ void loop() {
     Serial.println("Time Paused");
     TimeStatus = " Paused";
   }
+  CurrentTime = CheckControls();
   if (CurrentTime == 288) {
     //reset Start Time for model midnight
     CurrentTime = 0;
@@ -182,9 +193,11 @@ void LightsDay() {
 }
 
 void StreetLightsTwilight(int Status) {
-  //This is the Daytime Lighting Sequence
+  //This cxontrols the turning on and off of streetlights
   int i = 0;
-  int StreetLightNo;
+  int StreetLightNo; //the number of the streetlight 
+  int TimeAccumulator; // holds how long has been spent in this routine since last time update
+  int RandomDelay; //generates the random delay
   do {
     //this loop continues until all building lights are on
     //choose a building to light
@@ -197,7 +210,17 @@ void StreetLightsTwilight(int Status) {
       Serial.print(i);
       Serial.println("/8");
       //delay turning on next light by a random amount
-      delay(random(100, 2000));
+      RandomDelay=(random(Scale/30, Scale/2));
+      TimeAccumulator = TimeAccumulator + RandomDelay;
+
+      delay(RandomDelay);
+
+      if (TimeAccumulator >= Scale) {
+        CurrentTime++; // update time
+        lcdPrint(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime), 0);
+        TimeAccumulator = 0;
+
+      }
     }
 
   } while (i < 8);  //exit when all light are on
@@ -207,6 +230,8 @@ void BuildingLightsTwilight(int Status) {
   //This is the Daytime Lighting Sequence
   int i = 0;
   int BuildingLightNo;
+  int TimeAccumulator; // holds how long has been spent in this routine since last time update
+  int RandomDelay; //generates the random delay
   do {
     //this loop continues until all building lights are on
     //choose a building to light
@@ -220,7 +245,17 @@ void BuildingLightsTwilight(int Status) {
       Serial.print(i);
       Serial.println("/8");
       //delay turning on next light by a random amount
-      delay(random(100, 2000));
+      //delay turning on next light by a random amount
+      RandomDelay=(random(Scale/30, Scale/2));
+      TimeAccumulator = TimeAccumulator + RandomDelay;
+
+      delay(RandomDelay);
+
+      if (TimeAccumulator >= Scale) {
+        CurrentTime++; // update time
+        lcdPrint(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime), 0);
+        TimeAccumulator = 0;
+      }
     }
 
   } while (i < 8);  //exit when all light are on
@@ -236,9 +271,12 @@ void PlatformLightsTwilight(int Status) {
     //this loop continues until all platform lights are on
     //choose a building to light
     PlatformLight(i, Status);
-    delay(1000);
+    delay(Scale/4);
+
     i++;
   } while (i < 4);  //exit when all light are on
+  CurrentTime++; // update time
+  lcdPrint(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime), 0);
 }
 
 void LightsEvening() {
@@ -256,6 +294,29 @@ void LightsEvening() {
       break;
   }
 }
+
+int CheckControls() {
+  // this routine reads the controls and returns a new value for CurrentTime
+  int i = 1;
+  do {
+    if (PCF_Controls.read(i)==ON) {
+      // found switch position
+      switch (i){
+        case 1: //Automatic
+          return CurrentTime;
+        case 2: //Night
+          return 0;
+        case 3: //Day
+          return 96;
+        case 4: // Evening
+          return 228;
+      }
+    }
+    i++;
+  } while (i<4);
+
+}
+
 void LightsBedtime() {
   //This is the nighttime Lighting Sequence
   //StreetLights ON
@@ -397,9 +458,9 @@ String TimeFormat(int timeIndex) {
   int Minute =(timeIndex-(Hour*12))*5;
   String FormattedTime;
   if (Hour < 10) {
-    FormattedTime = "0" + String(Hour) + ":00";
+    FormattedTime = "0" + String(Hour);
   } else {
-    FormattedTime = String(Hour) + ":00";
+    FormattedTime = String(Hour);
   }
   if (Minute <10){
     FormattedTime=FormattedTime+":05"; 
@@ -417,6 +478,7 @@ void lcdTest() {
   //delay(2000);
   lcd.clear();  // Clears the  display
 }
+
 void lcdPrint(String message, int line) {
   lcd.setCursor(0, line);  // set the cursor to column 0, line 0
   lcd.print(message);

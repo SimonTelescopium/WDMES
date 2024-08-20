@@ -45,7 +45,7 @@ PCF8574 PCF_Controls(0x23);        // this is the PCF GPIO board in the controll
 LiquidCrystal_I2C lcd(0x27, 16, 2);  // set the LCD address and the number of columns and rows, ths is teh control box LCD
 
 // set below the digital pin to use to pause time
-#define PausePin 6  //D6 Pauses when Pin is high (5v)
+//#define PausePin 6  //D6 Pauses when Pin is high (5v)
 
 int CurrentTime = 0;  //holds the current hour the model is emulating
 int CurrentDay = 0;   //holds the current day of the week
@@ -59,7 +59,10 @@ const int OFF = 1;
 /*Scale is the amount of real time to pass in ms for 5 minmutes of  model time to pass, 
 for an authentic experience scale should be set to 3947 i.e 47s in the model is one hour or 1 day in the model is 18.8 minutes
 */
-const double Scale = 400;  //Change to 3947 (this is equvilent to simulating a '5 minute' cadence in the model at OO gauge 1/76)
+const double ReturnScale = 400; //Change to 3947 (this is equvilent to simulating a '5 minute' cadence in the model at OO gauge 1/76)
+double Scale = ReturnScale;  
+
+void SpeedUp(int, int = -1); // Sets default parameters for SpeedUp function
 
 //
 //    ------------------------------ NO MORE CONFIGURATION BEYOND THIS POINT -------------------------------------
@@ -80,14 +83,14 @@ void setup() {
   lcd.backlight(); //turn on back light
   // Start Serial Port
   Serial.begin(9600);
-  pinMode(PausePin, INPUT_PULLUP);  // Set digital pin used to - PAUSE MODEL TIME - to input
+  //pinMode(PausePin, INPUT_PULLUP);  // Set digital pin used to - PAUSE MODEL TIME - to input
 
   //perform a test on the connected PCF devices (o/p to serial port)
   PCFTest();//test PCF output result on serial port
   PCF_Controls.write(0, ON); //set pin 0 of control board this is the common for the control dial so we can detect the position the rotary switch is in 
   lcdTest(); //perform a start-up sequence
   //LightsTest();//perform a simple lights test
-  //message();  //flash a test messAGE
+  //message();  //flash a test message
 }
 
 void loop() {
@@ -100,7 +103,7 @@ void loop() {
   //Serial.print("CurrentDay: ");
   //Serial.println(DayOfWeek[CurrentDay]);
   //get the 'models' time
-  if (Pause == false) {
+  //if (Pause == false) {
     switch (CurrentTime) {
 
       case 0:  //Night   00:00 - 07:00
@@ -143,10 +146,10 @@ void loop() {
         LightsBedtime();
         break;
     }
-  }
+  //}
   delay(Scale);
 
-  Pause = digitalRead(PausePin);
+  //Pause = digitalRead(PausePin);
   if (Pause == false) {
     // if Pause is false then increment time otherwise hour stays the same effectivly pausing time
     CurrentTime++;
@@ -155,7 +158,7 @@ void loop() {
     Serial.println("Time Paused");
     TimeStatus = " Paused";
   }
-  CurrentTime = CheckControls();
+  CheckControls();
   if (CurrentTime == 288) {
     //reset Start Time for model midnight
     CurrentTime = 0;
@@ -296,25 +299,49 @@ void LightsEvening() {
 }
 
 int CheckControls() {
+  // If the PCF Control Board is not connected, the arduino tries to reconnect and time returns to automatic.
+  if (!PCF_Controls.isConnected()) { 
+      AutomaticTime();
+      return;
+  }
+
   // this routine reads the controls and returns a new value for CurrentTime
-  int i = 1;
+  PCF_Controls.write(0, ON);
+  int i = 2;
   do {
     if (PCF_Controls.read(i)==ON) {
       // found switch position
       switch (i){
-        case 1: //Automatic
-          return CurrentTime;
         case 2: //Night
-          return 0;
+          SpeedUp(288,0);
+          return;
         case 3: //Day
-          return 96;
+          SpeedUp(108);
+          return;
         case 4: // Evening
-          return 228;
-      }
+          SpeedUp(252);
+          return;
+        }
     }
     i++;
-  } while (i<4);
+  } while (i<5);
+  AutomaticTime();
+  return;
+}
 
+void AutomaticTime() {
+  Scale = ReturnScale;
+  Pause=false;
+}
+
+void SpeedUp(int FirstTime, int SecondTime) {
+  if (CurrentTime == FirstTime || CurrentTime == SecondTime) {
+    Scale = ReturnScale;
+    Pause = true;
+  } else {
+    Scale = 1;
+    Pause = false;
+  }
 }
 
 void LightsBedtime() {
@@ -462,7 +489,9 @@ String TimeFormat(int timeIndex) {
   } else {
     FormattedTime = String(Hour);
   }
-  if (Minute <10){
+  if (Minute < 5){
+    FormattedTime=FormattedTime+":00"; 
+  } else if (Minute < 10){
     FormattedTime=FormattedTime+":05"; 
   } else{
     FormattedTime=FormattedTime+":"+Minute;

@@ -1,6 +1,6 @@
 WDMES Overhead DALI Lights to I2C Controller
 ========================================
-**(OHDLCON)**
+<center>**(OHDLCON)**</center>center>
 
 
 Purpose

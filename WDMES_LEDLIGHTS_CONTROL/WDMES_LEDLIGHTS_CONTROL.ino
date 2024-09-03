@@ -111,7 +111,6 @@ void loop() {
         StreetLights(ON);
         BuildingLights(OFF);
         PlatformLights(ON);
-
         break;
 
       case 84:  //Dawn    07:00-08:00
@@ -119,12 +118,17 @@ void loop() {
         lcdPrint("Dawn     ", 1);
         StreetLightsTwilight(OFF);
         PlatformLightsTwilight(OFF);
-
         break;
 
       case 96:  //Day     08:00 - 18:00
+
         lcdPrint("Day      ", 1);
         LightsDay();
+        break;
+
+      case 150: //Clubhouse empties 12:30
+        
+        Serial.println("Clubhouse: Off"); // ClubHouseLights(ON);
         break;
 
       case 216:  //Dusk    18:00-19:00
@@ -133,15 +137,16 @@ void loop() {
         StreetLightsTwilight(ON);
         PlatformLightsTwilight(ON);
         BuildingLightsTwilight(ON);
-
         break;
 
       case 228:  //Evening 19:00 - 23:00
+
         lcdPrint("Evening  ", 1);
         LightsEvening();
         break;
 
       case 276:  //Bedtime 23:00 - 00:00
+
         lcdPrint("Bedtime  ", 1);
         LightsBedtime();
         break;
@@ -182,15 +187,15 @@ void LightsDay() {
   //
   switch (CurrentDay) {
     case 1:  //Tuesday
-      Serial.println("Welder On");
+      Serial.println("Clubhouse: On"); // ClubHouseLights(ON);
       break;
 
     case 3:  //Thursday
-      Serial.println("Welder On");
+      Serial.println("Clubhouse: On"); // ClubHouseLights(ON);
       break;
 
     case 6:  //Sunday
-      Serial.println("Welder On");
+      Serial.println("Clubhouse: On"); // ClubHouseLights(ON);
       break;
   }
 }
@@ -263,8 +268,6 @@ void BuildingLightsTwilight(int Status) {
 
   } while (i < 8);  //exit when all light are on
 
-  //
-  Serial.println("Twilight: Turn Welder Off");
 }
 
 void PlatformLightsTwilight(int Status) {
@@ -290,10 +293,8 @@ void LightsEvening() {
   BuildingLights(ON);
 
   switch (CurrentDay) {
-
     case 3:  //Thursday
-      Serial.println("Welder On");
-      Serial.println("Club house light on");
+      Serial.println("Clubhouse: On");  // ClubHouseLights(ON);
       break;
   }
 }
@@ -312,14 +313,14 @@ int CheckControls() {
     if (PCF_Controls.read(i)==ON) {
       // found switch position
       switch (i){
-        case 2: //Night
+        case 2: //Day - 10am
+          SpeedUp(120);
+          return;
+        case 3: //Evening - 10pm
+          SpeedUp(264);
+          return;
+        case 4: // Midnight - 12am
           SpeedUp(288,0);
-          return;
-        case 3: //Day
-          SpeedUp(108);
-          return;
-        case 4: // Evening
-          SpeedUp(252);
           return;
         }
     }
@@ -352,7 +353,7 @@ void LightsBedtime() {
   BuildingLightsTwilight(OFF);  // un-comment when PCF8574 is added
                                 //Building Lights Off
                                 //
-  Serial.println("Welder Off");
+  Serial.println("Clubhouse: Off");  // ClubHouseLights(OFF);
 }
 
 void StreetLights(int Status) {
@@ -370,9 +371,14 @@ void BuildingLights(int Status) {
 }
 void PlatformLights(int Status) {
   //Turns building lights on or off
-  for (int i = 0; i <= 4; i++) {
+  for (int i = 0; i <= 3; i++) {
     PlatformLight(i, Status);
   }
+}
+
+void ClubHouseLights(int Status) {
+  PCF_PlatformLights.write(4, Status); // Pins 4 and 5 on the PCF8574 board for the platform lights should be connected to welder and clubhouse.
+  PCF_PlatformLights.write(5, Status);
 }
 
 void StreetLight(int LED, int Status) {

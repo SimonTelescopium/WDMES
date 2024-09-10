@@ -3,16 +3,16 @@
 ## OO Gauge microcontroller projects
 
 ### SERVO POWER UP
-\ A controller to turn on points servo controllers one at a time \
+_A controller to turn on points servo controllers one at a time_ 
 
 ### Platform Displays
 
-**/ A 3D model and arduino project to make 0.4" platform display boards **
+_A 3D model and arduino project to make 0.4" platform display boards_
 
 ### Light Control
 
-** A lights controller to turn on/off lights in a realistic sequence **
+_A lights controller to turn on/off lights in a realistic sequence_
 
 ### DALI Lights Controller
 
-** A I2C DALI lights controller using an Arduino **
+_A I2C DALI lights controller using an Arduino_

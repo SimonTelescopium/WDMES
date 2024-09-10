@@ -15,4 +15,4 @@ _A lights controller to turn on/off lights in a realistic sequence_
 
 ### DALI Lights Controller
 
-_A I2C DALI lights controller using an Arduino_
+_An I2C DALI lights controller using an Arduino_

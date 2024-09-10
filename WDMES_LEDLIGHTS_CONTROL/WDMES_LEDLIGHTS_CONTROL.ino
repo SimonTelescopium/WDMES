@@ -42,7 +42,9 @@ PCF8574 PCF_BuildingLights(0x21);  // this is the address for the building light
 PCF8574 PCF_PlatformLights(0x22);  // this is the address for the platform lights (up to 4 platforms, the rest will be used for special lights)
 PCF8574 PCF_Controls(0x23);        // this is the PCF GPIO board in the controll box.
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);  // set the LCD address and the number of columns and rows, ths is teh control box LCD
+// set the LCD address and the number of columns and rows, ths is the control box LCD
+//LiquidCrystal_I2C lcd(0x27, 16, 2); 
+LiquidCrystal_I2C lcd(0x27, 20, 4); 
 
 // set below the digital pin to use to pause time
 //#define PausePin 6  //D6 Pauses when Pin is high (5v)
@@ -50,7 +52,8 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);  // set the LCD address and the number of co
 int CurrentTime = 0;  //holds the current hour the model is emulating
 int CurrentDay = 0;   //holds the current day of the week
 String TimeStatus = "Running";
-const String DayOfWeek[7] = { "Monday     ", "Tuesday    ", "Wednesday  ", "Thursday   ", "Friday     ", "Saturday   ", "Sunday     " };
+//const String DayOfWeek[7] = { "Monday     ", "Tuesday    ", "Wednesday  ", "Thursday   ", "Friday     ", "Saturday   ", "Sunday     " };
+const String DayOfWeek[7] = { "Monday         ", "Tuesday        ", "Wednesday      ", "Thursday       ", "Friday         ", "Saturday       ", "Sunday         " };
 bool Pause = false;
 // Change values of below for pull up or pull down on the LED's, the WDMES 00 guage model is LOW (0) = LED ON
 const int ON = 0;
@@ -79,8 +82,10 @@ void setup() {
   PCF_Controls.begin();
 
   // Start LCD
-  lcd.begin(16, 2);
+  //lcd.begin(16, 2);
+  lcd.begin(20,4);
   lcd.backlight(); //turn on back light
+
   // Start Serial Port
   Serial.begin(9600);
   //pinMode(PausePin, INPUT_PULLUP);  // Set digital pin used to - PAUSE MODEL TIME - to input
@@ -97,7 +102,8 @@ void loop() {
   // put your main code here, to run repeatedly:
   Serial.println(TimeFormat(CurrentTime));
   lcdPrint(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime), 0);
-  lcd.setCursor(9, 1);
+  //lcd.setCursor(9, 1);
+  lcd.setCursor(13,2);
   lcd.print(TimeStatus);
 
   //Serial.print("CurrentDay: ");
@@ -107,7 +113,9 @@ void loop() {
     switch (CurrentTime) {
 
       case 0:  //Night   00:00 - 07:00
-        lcdPrint("Night    ", 1);
+
+        //lcdPrint("Night    ", 1);
+        lcdPrint("Night        ", 1);
         StreetLights(ON);
         BuildingLights(OFF);
         PlatformLights(ON);
@@ -115,14 +123,16 @@ void loop() {
 
       case 84:  //Dawn    07:00-08:00
 
-        lcdPrint("Dawn     ", 1);
+        //lcdPrint("Dawn     ", 1);
+        lcdPrint("Dawn         ", 1);
         StreetLightsTwilight(OFF);
         PlatformLightsTwilight(OFF);
         break;
 
       case 96:  //Day     08:00 - 18:00
 
-        lcdPrint("Day      ", 1);
+        //lcdPrint("Day      ", 1);
+        lcdPrint("Day          ", 1);
         LightsDay();
         break;
 
@@ -133,7 +143,8 @@ void loop() {
 
       case 216:  //Dusk    18:00-19:00
 
-        lcdPrint("Dusk     ", 1);
+        //lcdPrint("Dusk     ", 1);
+        lcdPrint("Dusk         ", 1);
         StreetLightsTwilight(ON);
         PlatformLightsTwilight(ON);
         BuildingLightsTwilight(ON);
@@ -141,13 +152,15 @@ void loop() {
 
       case 228:  //Evening 19:00 - 23:00
 
-        lcdPrint("Evening  ", 1);
+        //lcdPrint("Evening  ", 1);
+        lcdPrint("Evening      ", 1);
         LightsEvening();
         break;
 
       case 276:  //Bedtime 23:00 - 00:00
 
-        lcdPrint("Bedtime  ", 1);
+        //lcdPrint("Bedtime  ", 1);
+        lcdPrint("Bedtime      ", 1);
         LightsBedtime();
         break;
     }
@@ -506,15 +519,18 @@ String TimeFormat(int timeIndex) {
 }
 
 void lcdTest() {
-  lcd.setCursor(0, 0);  // set the cursor to column 0, line 0
+  lcd.setCursor(5, 1);  // set the cursor to column 5, line 1
   lcd.print("W.D.M.E.S.");
-  lcd.setCursor(0, 1);  // set the cursor to column 0, line 1
+  lcd.setCursor(2, 2);  // set the cursor to column 2, line 2
   lcd.print("OO Gauge Railway");
-  //delay(2000);
+  delay(10000);
   lcd.clear();  // Clears the  display
+  lcd.setCursor(5, 0);  // set the cursor to column 5, line 0
+  lcd.print("W.D.M.E.S.");
 }
 
 void lcdPrint(String message, int line) {
-  lcd.setCursor(0, line);  // set the cursor to column 0, line 0
+  //lcd.setCursor(0, line);  // set the cursor to column 0, line 0
+  lcd.setCursor(0, line+1);  // set the cursor to column 0, line 0
   lcd.print(message);
 }

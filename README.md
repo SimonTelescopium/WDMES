@@ -3,7 +3,7 @@
 ## OO Gauge microcontroller projects
 
 ### SERVO POWER UP
-** A controller to turn on points servo controllers one at a time **
+\ A controller to turn on points servo controllers one at a time \
 
 ### Platform Displays
 

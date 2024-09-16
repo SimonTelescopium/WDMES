@@ -16,6 +16,15 @@ This is a work in progress - this code currently doesn't doesn't work or is very
 
 DALI is a lighting control protocol/interface.
 
+## DALI Concepts
+
+- Communication is via a two-wire, low-voltage bus running at a 1200 bps
+- Signal levels are defined as 0±4.5 V for logical '0' and 16±6.5 V for logical '1'
+- Bus quiescent state is logical '1'
+- A single DALI network can control up to 64 luminaires
+- Luminaires can be addressed individually and simultaneously in group or scenes
+- A new luminaire cannot respond to individual addressing until it is initialized as it does not have a short address
+- 
 
 ## Approach
 

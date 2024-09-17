@@ -1,6 +1,6 @@
 ### WDMES SERVO POWER CONTROLLER
 
-### STATUS: Working and in use on model
+STATUS: Working and in use
 
 ## Problem
 

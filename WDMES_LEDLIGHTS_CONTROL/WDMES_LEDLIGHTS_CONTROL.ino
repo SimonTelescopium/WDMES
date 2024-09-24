@@ -59,6 +59,11 @@ bool Pause = false;
 const int ON = 0;
 const int OFF = 1;
 
+  // declare global arrays for LED states
+  int BuildingLEDStatus[8] = {0,0,0,0,0,0,0,0};
+  int StreetLEDStatus[8] = {0,0,0,0,0,0,0,0};
+  int PlatformLEDStatus[8] = {0,0,0,0,0,0,0,0};
+
 /*Scale is the amount of real time to pass in ms for 5 minmutes of  model time to pass, 
 for an authentic experience scale should be set to 3947 i.e 47s in the model is one hour or 1 day in the model is 18.8 minutes
 */
@@ -94,7 +99,9 @@ void setup() {
   PCFTest();//test PCF output result on serial port
   PCF_Controls.write(0, ON); //set pin 0 of control board this is the common for the control dial so we can detect the position the rotary switch is in 
   lcdTest(); //perform a start-up sequence
-  //LightsTest();//perform a simple lights test
+
+
+  LightsTest();//perform a simple lights test
   //message();  //flash a test message
 }
 
@@ -149,7 +156,7 @@ void loop() {
         PlatformLightsTwilight(ON);
         BuildingLightsTwilight(ON);
         break;
-
+//AllLEDOn
       case 228:  //Evening 19:00 - 23:00
 
         //lcdPrint("Evening  ", 1);
@@ -223,7 +230,9 @@ void StreetLightsTwilight(int Status) {
     //this loop continues until all building lights are on
     //choose a building to light
     StreetLightNo = random(8);
-    if (PCF_StreetLights.read(StreetLightNo) != Status) {
+    //if (PCF_StreetLights.read(StreetLightNo) != Status) {
+
+    if (StreetLEDStatus[StreetLightNo] != Status) {
       //Light off so turn on
       StreetLight(StreetLightNo, Status);
       i++;
@@ -257,7 +266,8 @@ void BuildingLightsTwilight(int Status) {
     //this loop continues until all building lights are on
     //choose a building to light
     BuildingLightNo = random(8);
-    if (PCF_BuildingLights.read(BuildingLightNo) != Status) {
+    //if (PCF_BuildingLights.read(BuildingLightNo) != Status) {
+    if (BuildingLEDStatus[BuildingLightNo] != Status) {
       //Light off so turn on
       BuildingLight(BuildingLightNo, Status);
       i++;
@@ -373,6 +383,7 @@ void StreetLights(int Status) {
   //Turns street lights on or off
   for (int i = 0; i <= 7; i++) {
     StreetLight(i, Status);
+    StreetLEDStatus[i]=Status;
   }
 }
 
@@ -380,18 +391,22 @@ void BuildingLights(int Status) {
   //Turns building lights on or off
   for (int i = 0; i <= 7; i++) {
     BuildingLight(i, Status);
+    BuildingLEDStatus[i]=Status;
   }
 }
 void PlatformLights(int Status) {
   //Turns building lights on or off
   for (int i = 0; i <= 3; i++) {
     PlatformLight(i, Status);
+    PlatformLEDStatus[i]=Status;
   }
 }
 
 void ClubHouseLights(int Status) {
   PCF_PlatformLights.write(4, Status); // Pins 4 and 5 on the PCF8574 board for the platform lights should be connected to welder and clubhouse.
+  PlatformLEDStatus[4]=Status;
   PCF_PlatformLights.write(5, Status);
+  PlatformLEDStatus[5]=Status;
 }
 
 void StreetLight(int LED, int Status) {
@@ -399,6 +414,7 @@ void StreetLight(int LED, int Status) {
   //LED = 0-7 this is a port on the PCF8574 board
   //Status os either LOW, HIGH, ON or OFF
   PCF_StreetLights.write(LED, Status);
+  StreetLEDStatus[LED]=Status;
 }
 
 void BuildingLight(int LED, int Status) {
@@ -406,6 +422,7 @@ void BuildingLight(int LED, int Status) {
   //LED = 0-7 this is a port on the PCF8574 board
   //Status os either LOW, HIGH, ON or OFF
   PCF_BuildingLights.write(LED, Status);
+  BuildingLEDStatus[LED]=Status;
 }
 
 void PlatformLight(int LED, int Status) {
@@ -413,21 +430,28 @@ void PlatformLight(int LED, int Status) {
   //LED = 0-7 this is a port on the PCF8574 board
   //Status os either LOW, HIGH, ON or OFF
   PCF_PlatformLights.write(LED, Status);
+  PlatformLEDStatus[LED]=Status;
 }
 
 void AllLEDOn() {
   for (int i = 0; i <= 7; i++) {
     PCF_StreetLights.write(i, ON);
+    StreetLEDStatus[i]=ON;
     PCF_BuildingLights.write(i, ON);
+    BuildingLEDStatus[i]=ON;
     PCF_PlatformLights.write(i, ON);
+    PlatformLEDStatus[i]=ON;
   }
 }
 
 void AllLEDOff() {
   for (int i = 0; i <= 7; i++) {
     PCF_StreetLights.write(i, OFF);
+    StreetLEDStatus[i]=OFF;
     PCF_BuildingLights.write(i, OFF);
+    BuildingLEDStatus[i]=OFF;
     PCF_PlatformLights.write(i, OFF);
+    PlatformLEDStatus[i]=OFF;
   }
 }
 void PCFTest() {

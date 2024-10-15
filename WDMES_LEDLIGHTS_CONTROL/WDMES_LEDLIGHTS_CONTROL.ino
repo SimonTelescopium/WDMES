@@ -56,8 +56,10 @@ String TimeStatus = "Running";
 const String DayOfWeek[7] = { "Monday         ", "Tuesday        ", "Wednesday      ", "Thursday       ", "Friday         ", "Saturday       ", "Sunday         " };
 bool Pause = false;
 // Change values of below for pull up or pull down on the LED's, the WDMES 00 guage model is LOW (0) = LED ON
-const int ON = 0;
-const int OFF = 1;
+const int ON = 1;
+const int OFF = 0;
+
+
 
   // declare global arrays for LED states
   int BuildingLEDStatus[8] = {0,0,0,0,0,0,0,0};
@@ -97,11 +99,11 @@ void setup() {
 
   //perform a test on the connected PCF devices (o/p to serial port)
   PCFTest();//test PCF output result on serial port
-  PCF_Controls.write(0, ON); //set pin 0 of control board this is the common for the control dial so we can detect the position the rotary switch is in 
+  PCF_Controls.write(0, 0); //set pin 0 of control board this is the common for the control dial so we can detect the position the rotary switch is in 
   lcdTest(); //perform a start-up sequence
 
 
-  LightsTest();//perform a simple lights test
+  //lightsTest();//perform a simple lights test
   //message();  //flash a test message
 }
 
@@ -175,7 +177,7 @@ void loop() {
   delay(Scale);
 
   //Pause = digitalRead(PausePin);
-  if (Pause == false) {
+  if (Pause == false) { //changed from false
     // if Pause is false then increment time otherwise hour stays the same effectivly pausing time
     CurrentTime++;
     TimeStatus = "Running";
@@ -330,10 +332,10 @@ int CheckControls() {
   }
 
   // this routine reads the controls and returns a new value for CurrentTime
-  PCF_Controls.write(0, ON);
+  PCF_Controls.write(0, 0);
   int i = 2;
   do {
-    if (PCF_Controls.read(i)==ON) {
+    if (PCF_Controls.read(i)==0) {
       // found switch position
       switch (i){
         case 2: //Day - 10am

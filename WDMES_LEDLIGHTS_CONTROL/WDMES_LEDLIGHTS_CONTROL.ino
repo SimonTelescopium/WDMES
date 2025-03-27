@@ -1,44 +1,45 @@
-/* 
-WDMES I2C L.E.D. CONTROLLER
----------------------------
-AUTHOR:Simon Dawes (with help from Thomas)
----------------------------
-This uses a I2C I/O Expansion boards based on the PCF8574 IC
-Default I2C address is 0x20 (all address switches set to 0)
-SCl and SDA need pull up resisters ~4.7kOhm - 10kOhm
-SDA to Pin A4 of Arduino nano
-SCL to Pin A5 of Arduino nano
-the PCF8574 GPIO board needs 5v
+#pragma region INTRODUCTION
+  /* 
+  WDMES I2C L.E.D. CONTROLLER
+  ---------------------------
+  AUTHOR:Simon Dawes (with help from Thomas)
+  ---------------------------
+  This uses a I2C I/O Expansion boards based on the PCF8574 IC
+  Default I2C address is 0x20 (all address switches set to 0)
+  SCl and SDA need pull up resisters ~4.7kOhm - 10kOhm
+  SDA to Pin A4 of Arduino nano
+  SCL to Pin A5 of Arduino nano
+  the PCF8574 GPIO board needs 5v
 
-PCF8574 DIP Sw Config
-Pin 1 | Pin 2  | Pin 3 |Address
-off     off      off     0x20
-off     off      on      0x21
-off     on       off     0x22
-off     on       on      0x23
+  PCF8574 DIP Sw Config
+  Pin 1 | Pin 2  | Pin 3 |Address
+  off     off      off     0x20
+  off     off      on      0x21
+  off     on       off     0x22
+  off     on       on      0x23
 
-LED's wired to 5v PCF8574 o/p then to ground
+  LED's wired to 5v PCF8574 o/p then to ground
 
-Controls
---------
-Controls consist of a 4 way rotary switch connected to a PCF8574 i/o expansion board, communicating over I2C
-- Common is connected to p0 
-- Day selection is connected to p1
-- Evening selection is connected to p2
-- Night selection is connected to p3
+  Controls
+  --------
+  Controls consist of a 4 way rotary switch connected to a PCF8574 i/o expansion board, communicating over I2C
+  - Common is connected to p0 
+  - Day selection is connected to p1
+  - Evening selection is connected to p2
+  - Night selection is connected to p3
 
-User feedback is via a 20x4 LCD screen communicating over I2C
-In this way the controlls can be seperate from the main lighting circuit
-*/
-//  FILE:WDMES_LEDLIGHTS_CONTROL.ino
+  User feedback is via a 20x4 LCD screen communicating over I2C
+  In this way the controlls can be seperate from the main lighting circuit
+  */
+  //  FILE:WDMES_LEDLIGHTS_CONTROL.ino
 
+#pragma endregion
+
+#pragma region SETUP_LIBS_GLOBALS
 #include <Wire.h>               //I2C lib
 #include <PCF8574.h>            //IO extender lib
 #include <LiquidCrystal_I2C.h>  //LCD lib
-#include <RTClib.h>             // RTC lib
 #include <math.h>
-
-RTC_DS3231 rtc;
 
 //const int PCF8574_address = 0x20;
 PCF8574 PCF_StreetLights(0x20);    // this is the address for the street lights (up to 8 lights)
@@ -46,12 +47,7 @@ PCF8574 PCF_BuildingLights(0x21);  // this is the address for the building light
 PCF8574 PCF_PlatformLights(0x22);  // this is the address for the platform lights (up to 4 platforms, the rest will be used for special lights)
 PCF8574 PCF_Controls(0x23);        // this is the PCF GPIO board in the controll box.
 
-// set the LCD address and the number of columns and rows, ths is the control box LCD
-LiquidCrystal_I2C lcd(0x27, 20, 4);
-
-//Real Time Clock Address 0x68
-// set below the digital pin to use to pause time
-//#define PausePin 6  //D6 Pauses when Pin is high (5v)
+LiquidCrystal_I2C lcd(0x27, 20, 4);// set the LCD address and the number of columns and rows, ths is the control box LCD
 
 int CurrentTime = 0;  //holds the current hour the model is emulating
 int CurrentDay = 0;   //holds the current day of the week
@@ -71,100 +67,59 @@ const String DayOfWeek[7] = {
 const int ON = 1;
 const int OFF = 0;
 
-// diagnostic mode flag
-// bool Diagnostic = OFF;
-
-
 // declare global arrays for LED states
 int BuildingLEDStatus[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 int StreetLEDStatus[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 int PlatformLEDStatus[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 int RealTime = false;
 
-/*Scale is the amount of real time to pass in ms for 5 minmutes of  model time to pass, 
-for an authentic experience scale should be set to 3947 i.e 47s in the model is one hour or 1 day in the model is 18.8 minutes
-*/
 const double ReturnScale = 300;  //Change to 3947 (this is equvilent to simulating a '5 minute' cadence in the model at OO gauge 1/76)
 double Scale = ReturnScale;
 
 void SpeedUp(int, int = -1);  // Sets default parameters for SpeedUp function
-
+#pragma endregion
 //
 //    ------------------------------ NO MORE CONFIGURATION BEYOND THIS POINT -------------------------------------
 //
 
 void setup() {
-    // Start Serial Port
-  Serial.begin(9600);
-  // 30 second delay due to LCD power up delay
-  int i=30;
-  do{
+
+  Serial.begin(9600);  // Start Serial Port
+
+  int i = 30;  // 30 second delay due to LCD power up delay
+  do {
     Serial.print("Please Wait ");
     Serial.print(i);
     Serial.println("s");
     delay(1000);
     i--;
   } while (i > 0);
-  
-  
 
-  // Start i2C
-  Wire.begin();
-
-  // Start PCF8574
-  PCF_StreetLights.begin();
-
-  PCF_BuildingLights.begin();
-  PCF_PlatformLights.begin();
-  PCF_Controls.begin();
-
-  // Start LCD
-
-  lcd.begin(20,4);
+  Wire.begin();  // Start i2C
+  PCF_StreetLights.begin();  // Start PCF8574 for StreetLights board
+  PCF_BuildingLights.begin();// Start PCF8574 for BuildingLights board
+  PCF_PlatformLights.begin();// Start PCF8574 for PlatformLights board
+  PCF_Controls.begin();      // Start PCF8574 for Control board
+  lcd.begin(20, 4);  // Start LCD
   lcd.backlight();  //turn on back light
 
-
-  Serial.print("Hello WDMES");
   
-
-  // automatically sets the RTC to the date & time on PC this sketch was compiled
-  //
-  // --------- UNCOMMENT the next line to program the correct time into the RTC
-  // then comment out and reupload code ----------
-  //
-  // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  // manually sets the RTC with an explicit date & time, for example to set
-  // January 21, 2021 at 3am you would call:
-  // rtc.adjust(DateTime(2021, 1, 21, 3, 0, 0));
-
-
-
-
-  //perform a test on the connected PCF devices (o/p to serial port)
-  PCFTest();                 //test PCF output result on serial port
+  PCFTest();                 ////perform a test on the connected PCF devices (o/p to serial port) test PCF output result on serial port
   PCF_Controls.write(0, 0);  //set pin 0 of control board this is the common for the control dial so we can detect the position the rotary switch is in
   lcdStart();                //perform a start-up sequence
-
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  SendStatus();
-  // get RTCtime and store in variable
 
+  SendStatus();//print status of all LED's on serial port
   lcd.setCursor(0, 2);
   lcd.print(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
-  //lcd.setCursor(9, 1);
   lcd.setCursor(12, 3);
   lcd.print(TimeStatus);
 
-  //get the 'models' time
-  //if (Pause == false) {
   switch (CurrentTime) {
 
     case 0:  //Night   00:00 - 07:00
-
-      //lcdPrint("Night    ", 1);
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Night        ");
@@ -174,8 +129,6 @@ void loop() {
       break;
 
     case 84:  //Dawn    07:00-08:00
-
-      //lcdPrint("Dawn     ", 1);
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Dawn         ");
@@ -184,8 +137,6 @@ void loop() {
       break;
 
     case 96:  //Day     08:00 - 18:00
-
-      //lcdPrint("Day      ", 1);
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Day          ");
@@ -193,14 +144,10 @@ void loop() {
       break;
 
     case 150:  //Clubhouse empties 12:30
-
-      //Serial.println("Clubhouse: Off");  
       ClubHouseLights(OFF);
       break;
 
     case 216:  //Dusk    18:00-19:00 (216)
-
-      //lcdPrint("Dusk     ", 1);
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Dusk         ");
@@ -210,8 +157,6 @@ void loop() {
       break;
 
     case 228:  //Evening 19:00 - 23:00
-
-      //lcdPrint("Evening  ", 1);
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Evening      ");
@@ -219,8 +164,6 @@ void loop() {
       break;
 
     case 276:  //Bedtime 23:00 - 00:00
-
-      //lcdPrint("Bedtime  ", 1);
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Bedtime      ");
@@ -234,6 +177,7 @@ void loop() {
     // add more frequent checks in case mode changes, maybe code to increment time by 1 minute.
     delay(Scale);
   };
+
   // HACK to flash Platform Lights
   PlatformLights(ON);
   BuildingLights(ON);
@@ -242,9 +186,7 @@ void loop() {
   BuildingLights(OFF);
   delay(1000);
 
-  //Pause = digitalRead(PausePin);
-  if (Pause == false) {  //changed from false
-    // if Pause is false then increment time otherwise hour stays the same effectivly pausing time
+  if (Pause == false) { // if Pause is false then increment time otherwise hour stays the same effectivly pausing time   
     CurrentTime++;
     TimeStatus = " Running";
   } else {
@@ -268,37 +210,34 @@ void loop() {
 }
 
 //----------------------------------------------------------------------------------------------
-void SendStatus(){
-// This function presents the full status of the lights on the serial port
-String Status = DayOfWeek[CurrentDay] + TimeFormat(CurrentTime) + " Building:[";
-for (int i = 0; i <8; i++)
-{
-  Status = Status + BuildingLEDStatus[i];
-}
-Serial.print(Status +"]");
+void SendStatus() {
+  // This function presents the full status of the lights on the serial port
+  String Status = DayOfWeek[CurrentDay] + TimeFormat(CurrentTime) + " Building:[";
+  for (int i = 0; i < 8; i++) {
+    Status = Status + BuildingLEDStatus[i];
+  }
+  Serial.print(Status + "]");
 
-Status = " StreetLights:[";
-for (int i = 0; i <8; i++)
-{
-  Status = Status + StreetLEDStatus[i];
-}
-Serial.print(Status +"]");
+  Status = " StreetLights:[";
+  for (int i = 0; i < 8; i++) {
+    Status = Status + StreetLEDStatus[i];
+  }
+  Serial.print(Status + "]");
 
-Status = " Platform:[";
+  Status = " Platform:[";
 
 
-for (int i = 0; i <6; i++)
-{
-  Status = Status + PlatformLEDStatus[i];
-}
-Status = Status +"]";
+  for (int i = 0; i < 6; i++) {
+    Status = Status + PlatformLEDStatus[i];
+  }
+  Status = Status + "]";
 
-Serial.print(Status);
-Status="";
-Status = Status + " ClubHouse Light [" + PlatformLEDStatus[6] ;
-Status = Status + "] Welder [" + PlatformLEDStatus[7] +"]";
+  Serial.print(Status);
+  Status = "";
+  Status = Status + " ClubHouse Light [" + PlatformLEDStatus[6];
+  Status = Status + "] Welder [" + PlatformLEDStatus[7] + "]";
 
-Serial.println(Status);
+  Serial.println(Status);
 }
 
 void LightsDay() {
@@ -308,18 +247,18 @@ void LightsDay() {
   PlatformLights(OFF);
   //
   switch (CurrentDay) {
-    case 1:                             //Tuesday
-      //Serial.println("Clubhouse: On");  
+    case 1:  //Tuesday
+      //Serial.println("Clubhouse: On");
       ClubHouseLights(ON);
       break;
 
-    case 3:                             //Thursday
-      //Serial.println("Clubhouse: On");  
+    case 3:  //Thursday
+      //Serial.println("Clubhouse: On");
       ClubHouseLights(ON);
       break;
 
-    case 6:                             //Sunday
-      //Serial.println("Clubhouse: On");  
+    case 6:  //Sunday
+      //Serial.println("Clubhouse: On");
       ClubHouseLights(ON);
       break;
   }
@@ -423,8 +362,8 @@ void LightsEvening() {
   BuildingLights(ON);
 
   switch (CurrentDay) {
-    case 3:                             //Thursday
-      //Serial.println("Clubhouse: On");  
+    case 3:  //Thursday
+      //Serial.println("Clubhouse: On");
       ClubHouseLights(ON);
       break;
   }
@@ -494,10 +433,10 @@ void LightsBedtime() {
   //StreetLights ON
   StreetLights(ON);
   PlatformLights(ON);
-  BuildingLightsTwilight(OFF);       // un-comment when PCF8574 is added
-                                     //Building Lights Off
-                                     //
-  //Serial.println("Clubhouse: Off");  
+  BuildingLightsTwilight(OFF);  // un-comment when PCF8574 is added
+                                //Building Lights Off
+                                //
+  //Serial.println("Clubhouse: Off");
   ClubHouseLights(OFF);
 }
 
@@ -507,12 +446,11 @@ void StreetLights(int Status) {
     StreetLight(i, Status);
     StreetLEDStatus[i] = Status;
   }
-  if (Status == ON){
+  if (Status == ON) {
     //Serial.println("Street Lights On");
   } else {
     //Serial.println("Street Lights Off");
   }
-
 }
 
 void BuildingLights(int Status) {
@@ -521,7 +459,7 @@ void BuildingLights(int Status) {
     BuildingLight(i, Status);
     BuildingLEDStatus[i] = Status;
   }
-  if (Status == ON){
+  if (Status == ON) {
     //Serial.println("Building Lights On");
   } else {
     //Serial.println("Building Lights Off");
@@ -529,7 +467,7 @@ void BuildingLights(int Status) {
 }
 void PlatformLights(int Status) {
   //Turns building lights on or off
-  //NOTE: physical pins 7 & 8 (6&7 in code) are controlled seperatly for club house welder and lights 
+  //NOTE: physical pins 7 & 8 (6&7 in code) are controlled seperatly for club house welder and lights
   for (int i = 0; i <= 5; i++) {
     PlatformLight(i, Status);
     PlatformLEDStatus[i] = Status;
@@ -619,7 +557,7 @@ void AllLEDOff() {
     PCF_PlatformLights.write(i, OFF);
     PlatformLEDStatus[i] = OFF;
   }
-  Serial.println("All Lights Off");  
+  Serial.println("All Lights Off");
 }
 
 void PCFTest() {
@@ -722,11 +660,6 @@ void lcdStart() {
   //lcd.setCursor(5, 0);  // set the cursor to column 5, line 0
   //lcd.print("W.D.M.E.S.");
 }
-
-//  void lcdPrint(String message, int line) {
-//    lcd.setCursor(0, line+2);  // set the cursor to column 0, line 0
-//    lcd.print(message);
-//  }
 
 void LCDPrintRealTime() {
   //load datetime with value from RTC

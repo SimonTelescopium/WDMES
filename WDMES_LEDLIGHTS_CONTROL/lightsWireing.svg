@@ -25,9 +25,9 @@
      inkscape:document-units="mm"
      inkscape:lockguides="true"
      showgrid="true"
-     inkscape:zoom="0.64762219"
-     inkscape:cx="-232.38858"
-     inkscape:cy="470.18154"
+     inkscape:zoom="1.4654531"
+     inkscape:cx="561.25984"
+     inkscape:cy="396.80559"
      inkscape:window-width="2560"
      inkscape:window-height="1528"
      inkscape:window-x="0"
@@ -270,23 +270,24 @@
        id="g13-4-68"
        transform="rotate(13.630795,659.61438,552.39611)"
        inkscape:transform-center-x="-25.984098"
-       inkscape:transform-center-y="12.992049">
+       inkscape:transform-center-y="12.992049"
+       style="stroke:#00d400">
       <ellipse
-         style="fill:none;stroke:#1a1a1a;stroke-width:0.328999;stroke-miterlimit:5.8"
+         style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-miterlimit:5.8"
          id="path10-8-0"
          cx="79.970818"
          cy="175.50002"
          rx="0.49999991"
          ry="0.5" />
       <ellipse
-         style="fill:none;stroke:#1a1a1a;stroke-width:0.328999;stroke-miterlimit:5.8"
+         style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-miterlimit:5.8"
          id="path11-8-21"
          cx="79.970818"
          cy="179.5"
          rx="0.49999991"
          ry="0.5" />
       <path
-         style="fill:none;stroke:#1a1a1a;stroke-width:0.328999;stroke-miterlimit:5.8"
+         style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-miterlimit:5.8"
          d="m 79.999987,179 -0.02917,-2.99999"
          id="path12-8-051" />
     </g>
@@ -294,23 +295,24 @@
        id="g13-4-68-5"
        transform="rotate(13.630795,623.22436,780.48202)"
        inkscape:transform-center-x="-25.984098"
-       inkscape:transform-center-y="12.992049">
+       inkscape:transform-center-y="12.992049"
+       style="stroke:#00d400">
       <ellipse
-         style="fill:none;stroke:#1a1a1a;stroke-width:0.328999;stroke-miterlimit:5.8"
+         style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-miterlimit:5.8"
          id="path10-8-0-0"
          cx="79.970818"
          cy="175.50002"
          rx="0.49999991"
          ry="0.5" />
       <ellipse
-         style="fill:none;stroke:#1a1a1a;stroke-width:0.328999;stroke-miterlimit:5.8"
+         style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-miterlimit:5.8"
          id="path11-8-21-6"
          cx="79.970818"
          cy="179.5"
          rx="0.49999991"
          ry="0.5" />
       <path
-         style="fill:none;stroke:#1a1a1a;stroke-width:0.328999;stroke-miterlimit:5.8"
+         style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-miterlimit:5.8"
          d="m 79.999987,179 -0.02917,-2.99999"
          id="path12-8-051-4" />
     </g>
@@ -336,39 +338,34 @@
          style="fill:#ff0000;stroke:#0000ff;stroke-width:0.329"
          x="194.61238"
          y="164.83009">Platform B</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;stroke:#0000ff;stroke-width:0.328999;stroke-miterlimit:5.8"
+       x="194.99997"
+       y="131.58751"
+       id="text13-2"><tspan
+         sodipodi:role="line"
+         id="tspan13-4"
+         style="fill:#ff0000;stroke:#0000ff;stroke-width:0.329"
+         x="194.99997"
+         y="131.58751">Platform C</tspan></text>
     <g
-       id="g1"
-       transform="translate(0.07576162,-64.999975)"
-       style="stroke:#0000ff">
+       id="g1-9"
+       transform="rotate(10.92223,866.35132,507.50149)"
+       inkscape:transform-center-x="10.096376"
+       inkscape:transform-center-y="9.9668716"
+       style="stroke:#00d400;fill:#00d400">
       <text
          xml:space="preserve"
-         style="font-style:italic;font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;stroke:#0000ff;stroke-width:0.328999;stroke-miterlimit:5.8"
+         style="font-style:italic;font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#00d400;stroke:#00d400;stroke-width:0.328999;stroke-miterlimit:5.8"
          x="194.92421"
          y="196.58748"
-         id="text13-2"><tspan
+         id="text13-0"><tspan
            sodipodi:role="line"
-           id="tspan13-4"
-           style="fill:#ff0000;stroke:#0000ff;stroke-width:0.329"
+           id="tspan13-8"
+           style="fill:#00d400;stroke:#00d400;stroke-width:0.329"
            x="194.92421"
-           y="196.58748">Platform C</tspan></text>
-      <g
-         id="g1-9"
-         transform="rotate(10.92223,526.37009,539.60525)"
-         inkscape:transform-center-x="10.096376"
-         inkscape:transform-center-y="9.9668716"
-         style="stroke:#0000ff">
-        <text
-           xml:space="preserve"
-           style="font-style:italic;font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;stroke:#0000ff;stroke-width:0.328999;stroke-miterlimit:5.8"
-           x="194.92421"
-           y="196.58748"
-           id="text13-0"><tspan
-             sodipodi:role="line"
-             id="tspan13-8"
-             style="fill:#ff0000;stroke:#0000ff;stroke-width:0.329"
-             x="194.92421"
-             y="196.58748">Platform D</tspan></text>
-      </g>
+           y="196.58748">Platform D</tspan></text>
     </g>
     <g
        id="g15"
@@ -1993,9 +1990,9 @@
        xml:space="preserve"
        transform="scale(0.26458333)"
        id="text5"
-       style="fill:none;text-orientation:auto;stroke-width:1.24346457;font-size:17.33329201px;-inkscape-font-specification:'Times New Roman, Normal';font-family:'Times New Roman';stroke:#ff0000;stroke-miterlimit:1;stroke-linecap:square;text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect5)" />
+       style="font-size:17.3333px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect5);display:inline;fill:none;stroke:#ff0000;stroke-width:1.24346;stroke-linecap:square;stroke-miterlimit:1" />
     <rect
-       style="fill:none;stroke:#ff0000;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1"
+       style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1"
        id="rect7"
        width="62.494423"
        height="25"
@@ -2005,17 +2002,17 @@
        ry="0.90010631" />
     <text
        xml:space="preserve"
-       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;stroke:#ff0000;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1"
+       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;stroke:#00d400;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1"
        x="114.99877"
        y="74.766083"
        id="text8"><tspan
          sodipodi:role="line"
          id="tspan8"
-         style="stroke-width:0.329"
+         style="stroke-width:0.329;stroke:#00d400"
          x="114.99877"
          y="74.766083">Clubhouse</tspan></text>
     <path
-       style="fill:none;stroke:#ff0000;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dasharray:1.97399408,1.97399408;stroke-dashoffset:0.16449951"
+       style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dasharray:1.97399408, 1.97399408;stroke-dashoffset:0.16449951"
        d="m 134.99998,70.000002 v 25"
        id="path16" />
   </g>

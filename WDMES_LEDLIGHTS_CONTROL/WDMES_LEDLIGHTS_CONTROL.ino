@@ -100,13 +100,16 @@ void setup() {
   PCF_BuildingLights.begin();// Start PCF8574 for BuildingLights board
   PCF_PlatformLights.begin();// Start PCF8574 for PlatformLights board
   PCF_Controls.begin();      // Start PCF8574 for Control board
+
+  
   lcd.begin(20, 4);  // Start LCD
   lcd.backlight();  //turn on back light
 
   
   PCFTest();                 ////perform a test on the connected PCF devices (o/p to serial port) test PCF output result on serial port
   PCF_Controls.write(0, 0);  //set pin 0 of control board this is the common for the control dial so we can detect the position the rotary switch is in
-  lcdStart();                //perform a start-up sequence
+  lcdStart();   
+ 
 }
 
 void loop() {
@@ -173,18 +176,17 @@ void loop() {
 
   if (RealTime == false) {
     delay(Scale);  // 5 minute delay to scale
-  } else {
-    // add more frequent checks in case mode changes, maybe code to increment time by 1 minute.
+  } else {  // add more frequent checks in case mode changes, maybe code to increment time by 1 minute.
     delay(Scale);
   };
 
-  // HACK to flash Platform Lights
-  PlatformLights(ON);
-  BuildingLights(ON);
-  delay(1000);
-  PlatformLights(OFF);
-  BuildingLights(OFF);
-  delay(1000);
+  // // HACK to flash Platform Lights
+  // PlatformLights(ON);
+  // BuildingLights(ON);
+  // delay(1000);
+  // PlatformLights(OFF);
+  // BuildingLights(OFF);
+  // delay(1000);
 
   if (Pause == false) { // if Pause is false then increment time otherwise hour stays the same effectivly pausing time   
     CurrentTime++;
@@ -196,8 +198,7 @@ void loop() {
 
   CheckControls();  //  check state of controls
 
-  if (CurrentTime == 288) {
-    //reset Start Time for model midnight
+  if (CurrentTime == 288) {  //reset Start Time for model midnight
     CurrentTime = 0;
     CurrentDay++;
     if (CurrentDay == 7) {
@@ -348,7 +349,7 @@ void PlatformLightsTwilight(int Status) {
     delay(Scale / 4);
 
     i++;
-  } while (i <= 5);  //exit when all light are on
+  } while (i <= 7);  //exit when all light are on
   CurrentTime++;     // update time
   lcd.setCursor(0, 2);
   lcd.print(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
@@ -412,7 +413,6 @@ int CheckControls() {
   return;
 }
 
-
 void AutomaticTime() {
   Scale = ReturnScale;
   Pause = false;
@@ -465,30 +465,23 @@ void BuildingLights(int Status) {
     //Serial.println("Building Lights Off");
   }
 }
+
 void PlatformLights(int Status) {
   //Turns building lights on or off
-  //NOTE: physical pins 7 & 8 (6&7 in code) are controlled seperatly for club house welder and lights
-  for (int i = 0; i <= 5; i++) {
+  for (int i = 0; i <= 7; i++) {
     PlatformLight(i, Status);
     PlatformLEDStatus[i] = Status;
+    delay(500);
   }
-  // if (Status == ON){
-  //   //Serial.println("Platform Lights On");
-  // } else {
-  //   //Serial.println("Platform Lights Off");
-  // }
+
 }
 
 void ClubHouseLights(int Status) {
-  PCF_PlatformLights.write(6, Status);  // Pins 7 and 8 (6&7 in code) on the PCF8574 board should be connected to welder and clubhouse.
-  PlatformLEDStatus[6] = Status;
-  PCF_PlatformLights.write(7, Status);
-  PlatformLEDStatus[7] = Status;
-  // if (Status == ON){
-  //   //Serial.println("Clubhouse Lights On");
-  // } else {
-  //   //Serial.println("Clubhouse Lights Off");
-  // }
+  PCF_StreetLights.write(6, Status);  // Pins 7 and 8 (6&7 in code) on the PCF8574 board should be connected to welder and clubhouse.
+  StreetLEDStatus[6] = Status;
+  PCF_StreetLights.write(7, Status);
+  StreetLEDStatus[7] = Status;
+
 }
 
 void StreetLight(int LED, int Status) {
@@ -527,13 +520,7 @@ void PlatformLight(int LED, int Status) {
   //Status os either LOW, HIGH, ON or OFF
   PCF_PlatformLights.write(LED, Status);
   PlatformLEDStatus[LED] = Status;
-  // Serial.print("Platform Light ");
-  // Serial.print(LED);
-  // if (Status == ON){
-  // Serial.println(" On");
-  // } else {
-  //   Serial.println(" Off");
-  // }
+
 }
 
 void AllLEDOn() {
@@ -661,56 +648,55 @@ void lcdStart() {
   //lcd.print("W.D.M.E.S.");
 }
 
-void LCDPrintRealTime() {
-  //load datetime with value from RTC
-  DateTime now = rtc.now();
-  lcd.setCursor(0, 1);
-  lcd.print("     RTC  ");
-  lcd.setCursor(10, 1);  // set the cursor to column 5, line 1
-  int digit = now.hour();
-  if (digit < 10) {
-    lcd.print("0");
-    lcd.print(digit);
-  } else {
-    lcd.print(digit);
-  }
-  digit = now.minute();
-  lcd.print(":");
-  if (digit < 10) {
-    lcd.print("0");
-    lcd.print(digit);
-  } else {
-    lcd.print(digit);
-  }
-}
+// void LCDPrintRealTime() {
 
-void SwitchToRealTime() {
-  Serial.println("REALTIME MODE");
-  Pause = false;
-  RealTime = true;
+//   lcd.setCursor(0, 1);
+//   lcd.print("     RTC  ");
+//   lcd.setCursor(10, 1);  // set the cursor to column 5, line 1
+//   int digit = now.hour();
+//   if (digit < 10) {
+//     lcd.print("0");
+//     lcd.print(digit);
+//   } else {
+//     lcd.print(digit);
+//   }
+//   digit = now.minute();
+//   lcd.print(":");
+//   if (digit < 10) {
+//     lcd.print("0");
+//     lcd.print(digit);
+//   } else {
+//     lcd.print(digit);
+//   }
+// }
 
-  DateTime now = rtc.now();
+// void SwitchToRealTime() {
+//   Serial.println("REALTIME MODE");
+//   Pause = false;
+//   RealTime = true;
 
-  int ScaledTime = 0;
-  ScaledTime = ScaledTime + (now.hour() * 12);
-  ScaledTime = ScaledTime + floor(now.minute() / 5);
+//    DateTime now = rtc.now();
 
-  double ScaledTime1;
-  ScaledTime1 = ScaledTime1 + (now.hour() * 12);
-  ScaledTime1 = ScaledTime1 + (now.minute() / 5);
-  ScaledTime1 = ScaledTime1 + (now.second() / 300);
+//   int ScaledTime = 0;
+//   ScaledTime = ScaledTime + (now.hour() * 12);
+//   ScaledTime = ScaledTime + floor(now.minute() / 5);
 
-  double TimeDifference;
-  TimeDifference = 300000 * ((ScaledTime + 1) - ScaledTime1);
+//   double ScaledTime1;
+//   ScaledTime1 = ScaledTime1 + (now.hour() * 12);
+//   ScaledTime1 = ScaledTime1 + (now.minute() / 5);
+//   ScaledTime1 = ScaledTime1 + (now.second() / 300);
 
-  Serial.print("CurrentTime: ");
-  Serial.println(ScaledTime);
-  Serial.print("Exact CurrentTime: ");
-  Serial.println(ScaledTime1);
-  Serial.print("Wait until next 5min in ms: ");
-  Serial.println(TimeDifference);
+//   double TimeDifference;
+//   TimeDifference = 300000 * ((ScaledTime + 1) - ScaledTime1);
 
-  TimeStatus = "Realtime";
-  CurrentTime = ScaledTime;
-  Scale = TimeDifference;
-}
+//   Serial.print("CurrentTime: ");
+//   Serial.println(ScaledTime);
+//   Serial.print("Exact CurrentTime: ");
+//   Serial.println(ScaledTime1);
+//   Serial.print("Wait until next 5min in ms: ");
+//   Serial.println(TimeDifference);
+
+//   TimeStatus = "Realtime";
+//   CurrentTime = ScaledTime;
+//   Scale = TimeDifference;
+// }

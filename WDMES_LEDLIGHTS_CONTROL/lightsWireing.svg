@@ -25,9 +25,9 @@
      inkscape:document-units="mm"
      inkscape:lockguides="true"
      showgrid="true"
-     inkscape:zoom="1.4654531"
-     inkscape:cx="561.25986"
-     inkscape:cy="396.8056"
+     inkscape:zoom="1.6911949"
+     inkscape:cx="557.29827"
+     inkscape:cy="391.14356"
      inkscape:window-width="2560"
      inkscape:window-height="1528"
      inkscape:window-x="0"
@@ -2046,9 +2046,9 @@
        id="text9"><tspan
          x="259.99994"
          y="22.748936"
-         id="tspan57"><tspan
+         id="tspan61"><tspan
            style="stroke-width:0.329"
-           id="tspan6">5</tspan></tspan></text>
+           id="tspan60">5</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#00ff00;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dasharray:none;stroke-dashoffset:0.62173;stroke-opacity:1"
@@ -2133,5 +2133,42 @@
          x="220.0928"
          y="134.13142"
          id="tspan56">7 </tspan></text>
+    <ellipse
+       style="fill:none;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dashoffset:0.62173"
+       id="path1"
+       cx="84.999985"
+       cy="82.5"
+       rx="7.499999"
+       ry="7.5" />
+    <ellipse
+       style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-miterlimit:5.8"
+       id="path11-8-21-62"
+       cx="120.39526"
+       cy="55.681328"
+       rx="0.49999991"
+       ry="0.5"
+       transform="rotate(13.630795)" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#00ff00;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dashoffset:0.62173"
+       x="104.99998"
+       y="85"
+       id="text14"><tspan
+         sodipodi:role="line"
+         id="tspan9"
+         style="stroke-width:0.329"
+         x="104.99998"
+         y="85">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#00ff00;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dashoffset:0.62173"
+       x="224.99995"
+       y="100"
+       id="text58"><tspan
+         sodipodi:role="line"
+         id="tspan58"
+         style="stroke-width:0.329"
+         x="224.99995"
+         y="100">Club House</tspan></text>
   </g>
 </svg>

@@ -87,14 +87,15 @@ void setup() {
   Serial.begin(9600);  // Start Serial Port
 
   int i = 30;  // 30 second delay due to LCD power up delay
+Serial.print("Please Wait [");
   do {
-    Serial.print("Please Wait ");
-    Serial.print(i);
-    Serial.println("s");
+    
+    //Serial.print(i);
+    Serial.print(".");
     delay(1000);
     i--;
   } while (i > 0);
-
+  Serial.println("]");
   Wire.begin();  // Start i2C
   PCF_StreetLights.begin();  // Start PCF8574 for StreetLights board
   PCF_BuildingLights.begin();// Start PCF8574 for BuildingLights board
@@ -126,7 +127,7 @@ void loop() {
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Night        ");
-      StreetLights(ON);
+      //StreetLights(ON);
       BuildingLights(OFF);
       PlatformLights(ON);
       break;
@@ -135,7 +136,7 @@ void loop() {
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Dawn         ");
-      StreetLightsTwilight(OFF);
+      //StreetLightsTwilight(OFF);
       PlatformLightsTwilight(OFF);
       break;
 
@@ -154,7 +155,7 @@ void loop() {
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Dusk         ");
-      StreetLightsTwilight(ON);
+      //StreetLightsTwilight(ON);
       PlatformLightsTwilight(ON);
       BuildingLightsTwilight(ON);
       break;
@@ -181,12 +182,12 @@ void loop() {
   };
 
   // // HACK to flash Platform Lights
-  // PlatformLights(ON);
+  // StreetLight(1,ON);
   // BuildingLights(ON);
   // delay(1000);
   // PlatformLights(OFF);
-  // BuildingLights(OFF);
-  // delay(1000);
+  // StreetLights(OFF);
+  //. delay(1000);
 
   if (Pause == false) { // if Pause is false then increment time otherwise hour stays the same effectivly pausing time   
     CurrentTime++;
@@ -265,42 +266,42 @@ void LightsDay() {
   }
 }
 
-void StreetLightsTwilight(int Status) {
-  //This cxontrols the turning on and off of streetlights
-  int i = 0;
-  int StreetLightNo;    //the number of the streetlight
-  int TimeAccumulator;  // holds how long has been spent in this routine since last time update
-  int RandomDelay;      //generates the random delay
-  do {
-    //this loop continues until all building lights are on
-    //choose a building to light
-    StreetLightNo = random(8);
-    //if (PCF_StreetLights.read(StreetLightNo) != Status) {
+// void StreetLightsTwilight(int Status) {
+//   //This cxontrols the turning on and off of streetlights
+//   int i = 0;
+//   int StreetLightNo;    //the number of the streetlight
+//   int TimeAccumulator;  // holds how long has been spent in this routine since last time update
+//   int RandomDelay;      //generates the random delay
+//   do {
+//     //this loop continues until all building lights are on
+//     //choose a building to light
+//     StreetLightNo = random(8);
+//     //if (PCF_StreetLights.read(StreetLightNo) != Status) {
 
-    if (StreetLEDStatus[StreetLightNo] != Status) {
-      //Light off so turn on
-      StreetLight(StreetLightNo, Status);
-      i++;
-      // Serial.print("Streetlight ");
-      // Serial.print(i);
-      // Serial.println("/8");
-      //delay turning on next light by a random amount
-      RandomDelay = (random(Scale / 30, Scale / 2));
-      TimeAccumulator = TimeAccumulator + RandomDelay;
+//     if (StreetLEDStatus[StreetLightNo] != Status) {
+//       //Light off so turn on
+//       StreetLight(StreetLightNo, Status);
+//       i++;
+//       // Serial.print("Streetlight ");
+//       // Serial.print(i);
+//       // Serial.println("/8");
+//       //delay turning on next light by a random amount
+//       RandomDelay = (random(Scale / 30, Scale / 2));
+//       TimeAccumulator = TimeAccumulator + RandomDelay;
 
-      delay(RandomDelay);
+//       delay(RandomDelay);
 
-      if (TimeAccumulator >= Scale) {
-        CurrentTime++;  // update time
-        lcd.setCursor(0, 2);
-        lcd.print(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
-        //ExternalDisplay(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
-        TimeAccumulator = 0;
-      }
-    }
+//       if (TimeAccumulator >= Scale) {
+//         CurrentTime++;  // update time
+//         lcd.setCursor(0, 2);
+//         lcd.print(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
+//         //ExternalDisplay(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
+//         TimeAccumulator = 0;
+//       }
+//     }
 
-  } while (i < 8);  //exit when all light are on
-}
+//   } while (i < 8);  //exit when all light are on
+// }
 
 void BuildingLightsTwilight(int Status) {
   //This is the Daytime Lighting Sequence
@@ -337,6 +338,7 @@ void BuildingLightsTwilight(int Status) {
     }
 
   } while (i < 8);  //exit when all light are on
+  StreetLight(5,Status);
 }
 
 void PlatformLightsTwilight(int Status) {
@@ -351,6 +353,12 @@ void PlatformLightsTwilight(int Status) {
     i++;
   } while (i <= 7);  //exit when all light are on
   CurrentTime++;     // update time
+  //hack for platform D
+  delay(1000);
+  StreetLight(0,Status);
+  delay(500);
+  StreetLight(4,Status);
+
   lcd.setCursor(0, 2);
   lcd.print(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
 }
@@ -358,7 +366,7 @@ void PlatformLightsTwilight(int Status) {
 void LightsEvening() {
   //This is the Evening Lighting Sequence
   //Street Lights On
-  StreetLights(ON);
+  //StreetLights(ON);
   //Building Lights On
   BuildingLights(ON);
 
@@ -431,7 +439,7 @@ void SpeedUp(int FirstTime, int SecondTime) {
 void LightsBedtime() {
   //This is the nighttime Lighting Sequence
   //StreetLights ON
-  StreetLights(ON);
+  //StreetLights(ON);
   PlatformLights(ON);
   BuildingLightsTwilight(OFF);  // un-comment when PCF8574 is added
                                 //Building Lights Off
@@ -473,12 +481,19 @@ void PlatformLights(int Status) {
     PlatformLEDStatus[i] = Status;
     delay(500);
   }
+  //add controls for Platform D
+  delay(1000);
+  StreetLight(0,Status);
+  delay(500);
+  StreetLight(4,Status);
 
 }
 
 void ClubHouseLights(int Status) {
-  PCF_StreetLights.write(6, Status);  // Pins 7 and 8 (6&7 in code) on the PCF8574 board should be connected to welder and clubhouse.
-  StreetLEDStatus[6] = Status;
+  // clubhouse
+  PCF_StreetLights.write(1, Status);  // Pin 2, (port 1 in code) on the PCF8574 board should be connected to the clubhouse.
+  StreetLEDStatus[1] = Status;
+  // welder
   PCF_StreetLights.write(7, Status);
   StreetLEDStatus[7] = Status;
 
@@ -516,7 +531,7 @@ void BuildingLight(int LED, int Status) {
 
 void PlatformLight(int LED, int Status) {
   //set an LED acording to Status
-  //LED = 0-5 this is a port on the PCF8574 board
+  //LED = 0-7 this is a port on the PCF8574 board
   //Status os either LOW, HIGH, ON or OFF
   PCF_PlatformLights.write(LED, Status);
   PlatformLEDStatus[LED] = Status;
@@ -648,55 +663,3 @@ void lcdStart() {
   //lcd.print("W.D.M.E.S.");
 }
 
-// void LCDPrintRealTime() {
-
-//   lcd.setCursor(0, 1);
-//   lcd.print("     RTC  ");
-//   lcd.setCursor(10, 1);  // set the cursor to column 5, line 1
-//   int digit = now.hour();
-//   if (digit < 10) {
-//     lcd.print("0");
-//     lcd.print(digit);
-//   } else {
-//     lcd.print(digit);
-//   }
-//   digit = now.minute();
-//   lcd.print(":");
-//   if (digit < 10) {
-//     lcd.print("0");
-//     lcd.print(digit);
-//   } else {
-//     lcd.print(digit);
-//   }
-// }
-
-// void SwitchToRealTime() {
-//   Serial.println("REALTIME MODE");
-//   Pause = false;
-//   RealTime = true;
-
-//    DateTime now = rtc.now();
-
-//   int ScaledTime = 0;
-//   ScaledTime = ScaledTime + (now.hour() * 12);
-//   ScaledTime = ScaledTime + floor(now.minute() / 5);
-
-//   double ScaledTime1;
-//   ScaledTime1 = ScaledTime1 + (now.hour() * 12);
-//   ScaledTime1 = ScaledTime1 + (now.minute() / 5);
-//   ScaledTime1 = ScaledTime1 + (now.second() / 300);
-
-//   double TimeDifference;
-//   TimeDifference = 300000 * ((ScaledTime + 1) - ScaledTime1);
-
-//   Serial.print("CurrentTime: ");
-//   Serial.println(ScaledTime);
-//   Serial.print("Exact CurrentTime: ");
-//   Serial.println(ScaledTime1);
-//   Serial.print("Wait until next 5min in ms: ");
-//   Serial.println(TimeDifference);
-
-//   TimeStatus = "Realtime";
-//   CurrentTime = ScaledTime;
-//   Scale = TimeDifference;
-// }

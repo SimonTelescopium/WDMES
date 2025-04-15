@@ -1,5 +1,5 @@
 #pragma region INTRODUCTION
-  /* 
+/* 
   WDMES I2C L.E.D. CONTROLLER
   ---------------------------
   AUTHOR:Simon Dawes (with help from Thomas)
@@ -31,7 +31,7 @@
   User feedback is via a 20x4 LCD screen communicating over I2C
   In this way the controlls can be seperate from the main lighting circuit
   */
-  //  FILE:WDMES_LEDLIGHTS_CONTROL.ino
+//  FILE:WDMES_LEDLIGHTS_CONTROL.ino
 
 #pragma endregion
 
@@ -42,12 +42,12 @@
 #include <math.h>
 
 //const int PCF8574_address = 0x20;
-PCF8574 PCF_StreetLights(0x20);    // this is the address for the street lights (up to 8 lights)
-PCF8574 PCF_BuildingLights(0x21);  // this is the address for the building lights (up to 8 lights)
-PCF8574 PCF_PlatformLights(0x22);  // this is the address for the platform lights (up to 4 platforms, the rest will be used for special lights)
-PCF8574 PCF_Controls(0x23);        // this is the PCF GPIO board in the controll box.
+PCF8574 PCF_AuxiliaryLights(0x20);  // this is the address for the Auxiliary lights (up to 8 lights)
+PCF8574 PCF_BuildingLights(0x21);   // this is the address for the building lights (up to 8 lights)
+PCF8574 PCF_PlatformLights(0x22);   // this is the address for the platform lights (up to 4 platforms, the rest will be used for special lights)
+PCF8574 PCF_Controls(0x23);         // this is the PCF GPIO board in the controll box.
 
-LiquidCrystal_I2C lcd(0x27, 20, 4);// set the LCD address and the number of columns and rows, ths is the control box LCD
+LiquidCrystal_I2C lcd(0x27, 20, 4);  // set the LCD address and the number of columns and rows, ths is the control box LCD
 
 int CurrentTime = 0;  //holds the current hour the model is emulating
 int CurrentDay = 0;   //holds the current day of the week
@@ -69,7 +69,7 @@ const int OFF = 0;
 
 // declare global arrays for LED states
 int BuildingLEDStatus[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-int StreetLEDStatus[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+int AuxiliaryLEDStatus[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 int PlatformLEDStatus[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 int RealTime = false;
 
@@ -87,35 +87,34 @@ void setup() {
   Serial.begin(9600);  // Start Serial Port
 
   int i = 30;  // 30 second delay due to LCD power up delay
-Serial.print("Please Wait [");
+  Serial.print("Please Wait [");
   do {
-    
+
     //Serial.print(i);
     Serial.print(".");
     delay(1000);
     i--;
   } while (i > 0);
   Serial.println("]");
-  Wire.begin();  // Start i2C
-  PCF_StreetLights.begin();  // Start PCF8574 for StreetLights board
-  PCF_BuildingLights.begin();// Start PCF8574 for BuildingLights board
-  PCF_PlatformLights.begin();// Start PCF8574 for PlatformLights board
-  PCF_Controls.begin();      // Start PCF8574 for Control board
+  Wire.begin();                 // Start i2C
+  PCF_AuxiliaryLights.begin();  // Start PCF8574 for AuxiliaryLights board
+  PCF_BuildingLights.begin();   // Start PCF8574 for BuildingLights board
+  PCF_PlatformLights.begin();   // Start PCF8574 for PlatformLights board
+  PCF_Controls.begin();         // Start PCF8574 for Control board
 
-  
+
   lcd.begin(20, 4);  // Start LCD
-  lcd.backlight();  //turn on back light
+  lcd.backlight();   //turn on back light
 
-  
+
   PCFTest();                 ////perform a test on the connected PCF devices (o/p to serial port) test PCF output result on serial port
   PCF_Controls.write(0, 0);  //set pin 0 of control board this is the common for the control dial so we can detect the position the rotary switch is in
-  lcdStart();   
- 
+  lcdStart();
 }
 
 void loop() {
 
-  SendStatus();//print status of all LED's on serial port
+  SendStatus();  //print status of all LED's on serial port
   lcd.setCursor(0, 2);
   lcd.print(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
   lcd.setCursor(12, 3);
@@ -127,7 +126,7 @@ void loop() {
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Night        ");
-      //StreetLights(ON);
+      //AuxiliaryLights(ON);
       BuildingLights(OFF);
       PlatformLights(ON);
       break;
@@ -136,7 +135,7 @@ void loop() {
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Dawn         ");
-      //StreetLightsTwilight(OFF);
+      //AuxiliaryLightsTwilight(OFF);
       PlatformLightsTwilight(OFF);
       break;
 
@@ -155,7 +154,7 @@ void loop() {
       lcdStart();
       lcd.setCursor(0, 3);
       lcd.print("Dusk         ");
-      //StreetLightsTwilight(ON);
+      //AuxiliaryLightsTwilight(ON);
       PlatformLightsTwilight(ON);
       BuildingLightsTwilight(ON);
       break;
@@ -177,19 +176,19 @@ void loop() {
 
   if (RealTime == false) {
     delay(Scale);  // 5 minute delay to scale
-  } else {  // add more frequent checks in case mode changes, maybe code to increment time by 1 minute.
+  } else {         // add more frequent checks in case mode changes, maybe code to increment time by 1 minute.
     delay(Scale);
   };
 
   // // HACK to flash Platform Lights
-  // StreetLight(1,ON);
+  // AuxiliaryLight(1,ON);
   // BuildingLights(ON);
   // delay(1000);
   // PlatformLights(OFF);
-  // StreetLights(OFF);
+  // AuxiliaryLights(OFF);
   //. delay(1000);
 
-  if (Pause == false) { // if Pause is false then increment time otherwise hour stays the same effectivly pausing time   
+  if (Pause == false) {  // if Pause is false then increment time otherwise hour stays the same effectivly pausing time
     CurrentTime++;
     TimeStatus = " Running";
   } else {
@@ -220,9 +219,9 @@ void SendStatus() {
   }
   Serial.print(Status + "]");
 
-  Status = " StreetLights:[";
+  Status = " AuxiliaryLights:[";
   for (int i = 0; i < 8; i++) {
-    Status = Status + StreetLEDStatus[i];
+    Status = Status + AuxiliaryLEDStatus[i];
   }
   Serial.print(Status + "]");
 
@@ -244,7 +243,7 @@ void SendStatus() {
 
 void LightsDay() {
   //This is the Daytime Lighting Sequence for all lights
-  StreetLights(OFF);
+  AuxiliaryLights(OFF);
   BuildingLights(OFF);
   PlatformLights(OFF);
   //
@@ -266,43 +265,6 @@ void LightsDay() {
   }
 }
 
-// void StreetLightsTwilight(int Status) {
-//   //This cxontrols the turning on and off of streetlights
-//   int i = 0;
-//   int StreetLightNo;    //the number of the streetlight
-//   int TimeAccumulator;  // holds how long has been spent in this routine since last time update
-//   int RandomDelay;      //generates the random delay
-//   do {
-//     //this loop continues until all building lights are on
-//     //choose a building to light
-//     StreetLightNo = random(8);
-//     //if (PCF_StreetLights.read(StreetLightNo) != Status) {
-
-//     if (StreetLEDStatus[StreetLightNo] != Status) {
-//       //Light off so turn on
-//       StreetLight(StreetLightNo, Status);
-//       i++;
-//       // Serial.print("Streetlight ");
-//       // Serial.print(i);
-//       // Serial.println("/8");
-//       //delay turning on next light by a random amount
-//       RandomDelay = (random(Scale / 30, Scale / 2));
-//       TimeAccumulator = TimeAccumulator + RandomDelay;
-
-//       delay(RandomDelay);
-
-//       if (TimeAccumulator >= Scale) {
-//         CurrentTime++;  // update time
-//         lcd.setCursor(0, 2);
-//         lcd.print(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
-//         //ExternalDisplay(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
-//         TimeAccumulator = 0;
-//       }
-//     }
-
-//   } while (i < 8);  //exit when all light are on
-// }
-
 void BuildingLightsTwilight(int Status) {
   //This is the Daytime Lighting Sequence
   int i = 0;
@@ -311,18 +273,12 @@ void BuildingLightsTwilight(int Status) {
   int RandomDelay;      //generates the random delay
   do {
     //this loop continues until all building lights are on
-    //choose a building to light
-    BuildingLightNo = random(8);
-    //if (PCF_BuildingLights.read(BuildingLightNo) != Status) {
+ 
+    BuildingLightNo = random(8);   //choose a building to light
     if (BuildingLEDStatus[BuildingLightNo] != Status) {
       //Light off so turn on
       BuildingLight(BuildingLightNo, Status);
       i++;
-      // Serial.print("Buildinglight ");
-      // //Serial.print(Status);
-      // Serial.print(i);
-      // Serial.println("/8");
-      //delay turning on next light by a random amount
       //delay turning on next light by a random amount
       RandomDelay = (random(Scale / 30, Scale / 2));
       TimeAccumulator = TimeAccumulator + RandomDelay;
@@ -338,7 +294,7 @@ void BuildingLightsTwilight(int Status) {
     }
 
   } while (i < 8);  //exit when all light are on
-  StreetLight(5,Status);
+  AuxiliaryLight(5, Status); // turn on RHS Signal Box Light
 }
 
 void PlatformLightsTwilight(int Status) {
@@ -355,9 +311,9 @@ void PlatformLightsTwilight(int Status) {
   CurrentTime++;     // update time
   //hack for platform D
   delay(1000);
-  StreetLight(0,Status);
+  AuxiliaryLight(0, Status); // turn on/off Plat.D LHS Light
   delay(500);
-  StreetLight(4,Status);
+  AuxiliaryLight(4, Status); // Turn on/off Plat.D RHS light
 
   lcd.setCursor(0, 2);
   lcd.print(DayOfWeek[CurrentDay] + TimeFormat(CurrentTime));
@@ -365,14 +321,9 @@ void PlatformLightsTwilight(int Status) {
 
 void LightsEvening() {
   //This is the Evening Lighting Sequence
-  //Street Lights On
-  //StreetLights(ON);
-  //Building Lights On
   BuildingLights(ON);
-
   switch (CurrentDay) {
     case 3:  //Thursday
-      //Serial.println("Clubhouse: On");
       ClubHouseLights(ON);
       break;
   }
@@ -384,15 +335,10 @@ int CheckControls() {
     AutomaticTime();
     return;
   }
-
   // this routine reads the controls and returns a new value for CurrentTime
   PCF_Controls.write(0, 0);
-
-
-
   int i = 2;
   RealTime = false;
-  //lcdStart();
   do {
     if (PCF_Controls.read(i) == 0) {
       // found switch position
@@ -410,8 +356,6 @@ int CheckControls() {
           SpeedUp(288, 0);
           return;
         case 5:  // Real Time
-                 // SwitchToRealTime();
-          //Serial.println("Real Time Mode");
           return;
       }
     }
@@ -438,26 +382,16 @@ void SpeedUp(int FirstTime, int SecondTime) {
 
 void LightsBedtime() {
   //This is the nighttime Lighting Sequence
-  //StreetLights ON
-  //StreetLights(ON);
   PlatformLights(ON);
-  BuildingLightsTwilight(OFF);  // un-comment when PCF8574 is added
-                                //Building Lights Off
-                                //
-  //Serial.println("Clubhouse: Off");
+  BuildingLightsTwilight(OFF);
   ClubHouseLights(OFF);
 }
 
-void StreetLights(int Status) {
-  //Turns street lights on or off
+void AuxiliaryLights(int Status) {
+  //Turns Auxiliary lights on or off
   for (int i = 0; i <= 7; i++) {
-    StreetLight(i, Status);
-    StreetLEDStatus[i] = Status;
-  }
-  if (Status == ON) {
-    //Serial.println("Street Lights On");
-  } else {
-    //Serial.println("Street Lights Off");
+    AuxiliaryLight(i, Status);
+    AuxiliaryLEDStatus[i] = Status;
   }
 }
 
@@ -466,11 +400,6 @@ void BuildingLights(int Status) {
   for (int i = 0; i <= 7; i++) {
     BuildingLight(i, Status);
     BuildingLEDStatus[i] = Status;
-  }
-  if (Status == ON) {
-    //Serial.println("Building Lights On");
-  } else {
-    //Serial.println("Building Lights Off");
   }
 }
 
@@ -483,29 +412,27 @@ void PlatformLights(int Status) {
   }
   //add controls for Platform D
   delay(1000);
-  StreetLight(0,Status);
+  AuxiliaryLight(0, Status);
   delay(500);
-  StreetLight(4,Status);
-
+  AuxiliaryLight(4, Status);
 }
 
 void ClubHouseLights(int Status) {
   // clubhouse
-  PCF_StreetLights.write(1, Status);  // Pin 2, (port 1 in code) on the PCF8574 board should be connected to the clubhouse.
-  StreetLEDStatus[1] = Status;
+  PCF_AuxiliaryLights.write(1, Status);  // Pin 2, (port 1 in code) on the PCF8574 board should be connected to the clubhouse.
+  AuxiliaryLEDStatus[1] = Status;
   // welder
-  PCF_StreetLights.write(7, Status);
-  StreetLEDStatus[7] = Status;
-
+  PCF_AuxiliaryLights.write(7, Status);
+  AuxiliaryLEDStatus[7] = Status;
 }
 
-void StreetLight(int LED, int Status) {
+void AuxiliaryLight(int LED, int Status) {
   //set an LED acording to Status
   //LED = 0-7 this is a port on the PCF8574 board
   //Status os either LOW, HIGH, ON or OFF
-  PCF_StreetLights.write(LED, Status);
-  StreetLEDStatus[LED] = Status;
-  // Serial.print("Street Light ");
+  PCF_AuxiliaryLights.write(LED, Status);
+  AuxiliaryLEDStatus[LED] = Status;
+  // Serial.print("Auxiliary Light ");
   // Serial.print(LED);
   // if (Status == ON){
   // Serial.println(" On");
@@ -517,31 +444,23 @@ void StreetLight(int LED, int Status) {
 void BuildingLight(int LED, int Status) {
   //set an LED acording to Status
   //LED = 0-7 this is a port on the PCF8574 board
-  //Status os either LOW, HIGH, ON or OFF
+  //Status os either ON or OFF
   PCF_BuildingLights.write(LED, Status);
   BuildingLEDStatus[LED] = Status;
-  // Serial.print("Building Light ");
-  // Serial.print(LED);
-  // if (Status == ON){
-  // Serial.println(" On");
-  // } else {
-  //   Serial.println(" Off");
-  // }
 }
 
 void PlatformLight(int LED, int Status) {
   //set an LED acording to Status
   //LED = 0-7 this is a port on the PCF8574 board
-  //Status os either LOW, HIGH, ON or OFF
+  //Status os either ON or OFF
   PCF_PlatformLights.write(LED, Status);
   PlatformLEDStatus[LED] = Status;
-
 }
 
 void AllLEDOn() {
   for (int i = 0; i <= 7; i++) {
-    PCF_StreetLights.write(i, ON);
-    StreetLEDStatus[i] = ON;
+    PCF_AuxiliaryLights.write(i, ON);
+    AuxiliaryLEDStatus[i] = ON;
     PCF_BuildingLights.write(i, ON);
     BuildingLEDStatus[i] = ON;
     PCF_PlatformLights.write(i, ON);
@@ -552,8 +471,8 @@ void AllLEDOn() {
 
 void AllLEDOff() {
   for (int i = 0; i <= 7; i++) {
-    PCF_StreetLights.write(i, OFF);
-    StreetLEDStatus[i] = OFF;
+    PCF_AuxiliaryLights.write(i, OFF);
+    AuxiliaryLEDStatus[i] = OFF;
     PCF_BuildingLights.write(i, OFF);
     BuildingLEDStatus[i] = OFF;
     PCF_PlatformLights.write(i, OFF);
@@ -567,11 +486,11 @@ void PCFTest() {
   Serial.print("PCF8574_LIB_VERSION:\t");
   Serial.println(PCF8574_LIB_VERSION);
   // check we can see the I2C PCF8574 module return result on serial port
-  if (!PCF_StreetLights.begin()) {
+  if (!PCF_AuxiliaryLights.begin()) {
     Serial.println("could not initialize...");
   }
 
-  if (!PCF_StreetLights.isConnected()) {
+  if (!PCF_AuxiliaryLights.isConnected()) {
     Serial.println("=> not connected");
   } else {
     Serial.println("=> connected!!");
@@ -616,8 +535,6 @@ void message() {
     3, -1, 3, -1, 1, -1, 1, -1, 3, -1, 1, -1, 1, -1, 3, -1, 3, -1, 3, -1, 1, -1, 1, -3,
     1, -1, 3, -1, 1, -1, 1, -1, 3, -1, 1, -1, 1, -1, 1, -1, 3, -1, 1, -1, 1, -1, 1, -1, 3, -1, 3, -1, 1, -1, 3, -1, 3, -1, 1, -1, 3, -1, 3, -1
   };
-  //Serial.print("Size of array ");
-  //Serial.print(sizeof(myValues));
   // this for loop works correctly with an array of any type or size
   for (byte i = 0; i < (sizeof(myValues) / sizeof(myValues[0])); i++) {
     // do something with myValues[i]
@@ -657,9 +574,4 @@ void lcdStart() {
   lcd.print("W.D.M.E.S.");
   lcd.setCursor(2, 1);  // set the cursor to column 2, line 2
   lcd.print("OO Gauge Railway");
-  //delay(3000);
-  //lcd.clear();  // Clears the  display
-  //lcd.setCursor(5, 0);  // set the cursor to column 5, line 0
-  //lcd.print("W.D.M.E.S.");
 }
-

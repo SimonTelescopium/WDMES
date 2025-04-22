@@ -25,9 +25,9 @@
      inkscape:document-units="mm"
      inkscape:lockguides="true"
      showgrid="true"
-     inkscape:zoom="1.6911949"
-     inkscape:cx="557.29827"
-     inkscape:cy="391.14356"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="782.41365"
+     inkscape:cy="366.63487"
      inkscape:window-width="2560"
      inkscape:window-height="1528"
      inkscape:window-x="0"
@@ -2040,15 +2040,15 @@
          y="90.000008">Signal Box</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;white-space:pre;inline-size:0.0000226939;fill:#00ff00;stroke:none;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dasharray:none;stroke-dashoffset:0.62173;stroke-opacity:1"
+       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;white-space:pre;inline-size:2.26939e-05;display:inline;fill:#00ff00;stroke:none;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dasharray:none;stroke-dashoffset:0.62173;stroke-opacity:1"
        x="259.99994"
        y="22.748936"
        id="text9"><tspan
          x="259.99994"
          y="22.748936"
-         id="tspan61"><tspan
+         id="tspan66"><tspan
            style="stroke-width:0.329"
-           id="tspan60">5</tspan></tspan></text>
+           id="tspan64">5</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#00ff00;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dasharray:none;stroke-dashoffset:0.62173;stroke-opacity:1"
@@ -2122,7 +2122,7 @@
          style="stroke-width:0.329"
          x="220.0928"
          y="122.66618"
-         id="tspan36">5  Signal Box RHS</tspan><tspan
+         id="tspan36">5  FAULTY </tspan><tspan
          sodipodi:role="line"
          style="stroke-width:0.329"
          x="220.0928"
@@ -2132,7 +2132,7 @@
          style="stroke-width:0.329"
          x="220.0928"
          y="134.13142"
-         id="tspan56">7 </tspan></text>
+         id="tspan56">7 Signal Box RHS</tspan></text>
     <ellipse
        style="fill:none;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dashoffset:0.62173"
        id="path1"
@@ -2159,6 +2159,25 @@
          style="stroke-width:0.329"
          x="104.99998"
          y="85">1</tspan></text>
+    <ellipse
+       style="fill:none;stroke:#00d400;stroke-width:0.328999;stroke-miterlimit:5.8"
+       id="path11-8-21-62-5"
+       cx="159.26863"
+       cy="46.254749"
+       rx="0.49999991"
+       ry="0.5"
+       transform="rotate(13.630795)" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#00ff00;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dashoffset:0.62173"
+       x="144.99998"
+       y="85"
+       id="text14-3"><tspan
+         sodipodi:role="line"
+         id="tspan9-5"
+         style="stroke-width:0.329"
+         x="144.99998"
+         y="85">2</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#00ff00;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dashoffset:0.62173"
@@ -2170,5 +2189,38 @@
          style="stroke-width:0.329"
          x="224.99995"
          y="100">Club House</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ff2b00;fill-opacity:1;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dashoffset:0.62173"
+       x="224.99995"
+       y="105"
+       id="text7"><tspan
+         sodipodi:role="line"
+         id="tspan6"
+         style="fill:#00ff2c;fill-opacity:1;stroke-width:0.329"
+         x="224.99995"
+         y="105" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#00ff2c;fill-opacity:1;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dashoffset:0.62173"
+       x="234.99995"
+       y="100"
+       id="text57"><tspan
+         sodipodi:role="line"
+         id="tspan57"
+         style="stroke-width:0.329"
+         x="234.99995"
+         y="100" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.5861px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#00ff2c;fill-opacity:1;stroke:#00ff00;stroke-width:0.328999;stroke-linecap:square;stroke-miterlimit:1;stroke-dashoffset:0.62173"
+       x="224.99995"
+       y="105"
+       id="text62"><tspan
+         sodipodi:role="line"
+         id="tspan62"
+         style="stroke-width:0.329"
+         x="224.99995"
+         y="105">Welder</tspan></text>
   </g>
 </svg>
